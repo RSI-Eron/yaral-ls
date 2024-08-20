@@ -93,11 +93,11 @@ void RPCHandler::completion(const rpc_request& request) {
         documents,
         param["textDocument"]["uri"])->getLine(param["position"]["line"]);
 
-    std::vector<completion_item> item_list = completion_item::get_completion_list(line, (int)param["position"]["character"] - 1);
+    auto item_list = CompletionItem::getCompletionList(line, (int)param["position"]["character"] - 1);
 
     completion_list list = {
         .isIncomplete = false,
-        .itemDefaults = std::optional<completion_item>(), // Not used for now
+        .itemDefaults = std::optional<json>(), // Not used for now
         .items = item_list,
     };
 
@@ -111,6 +111,7 @@ void RPCHandler::completion(const rpc_request& request) {
     // print_request(request);
     // print_response(response);
 
+    print_response(response, false);
     sendResponse(response);
 }
 

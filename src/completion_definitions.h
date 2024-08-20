@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include <iostream>
 #include <chrono>
+#include <memory>
 #include <optional>
 #include <sstream>
 #include <string_view>
@@ -39,14 +40,8 @@ enum completionItemKind {
   TypeParameter = 25,
 };
 
-class completion_item { // json often means not supported
-public:
-    static void initialize_tree();
-    static std::vector<completion_item> get_completion_list(const std::string&, int);
 
-private:
-    static completion_item root;
-
+class CompletionItemProperties { // json often means not supported
 private: // members
     std::string label;
     std::optional<json> labelDetails;
@@ -67,10 +62,8 @@ private: // members
     std::optional<json> command;
     std::optional<json> data;
 
-    std::vector<completion_item> children;
-
 public: // Getters
-    const std::string getLabel() const;
+    const std::string& getLabel() const;
     const std::optional<json> getLabelDetails() const;
     const std::optional<json> getKind() const;
     const std::optional<json> getTags() const;
@@ -89,29 +82,50 @@ public: // Getters
     const std::optional<json> getCommand() const;
     const std::optional<json> getData() const;
 
-public: // Public non static functions
-    const completion_item* getChildByName(std::string) const;
+public:
+    CompletionItemProperties(std::string label) : label(std::move(label)) {}
+    friend bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs);
+};
+
+
+namespace std {
+    template <>
+    struct hash<CompletionItemProperties> {
+        std::size_t operator()(const CompletionItemProperties& obj) const {
+            // Simple example using only the label for hashing.
+            // Adjust this to include other members if necessary.
+            return std::hash<std::string>()(obj.getLabel());
+        }
+    };
+}
+
+class CompletionItem {
+public:
+    static void initialize_tree();
+    static const std::vector<CompletionItemProperties> getCompletionList(const std::string&, int);
 
 private:
-    completion_item(std::string_view str) : label(str), children{} {}
+    static std::shared_ptr<CompletionItem> root;
+    std::unordered_map<CompletionItemProperties, std::shared_ptr<CompletionItem>> children;
 
-    completion_item(const completion_item& other, std::string_view new_label)
-        : label(new_label), children(other.children) {}
+public:
+    const std::shared_ptr<CompletionItem> getChildByName(std::string) const;
+    CompletionItem() = default;
 
-    bool operator==(const completion_item& rhs) const {
-        return this->label == rhs.label;
-    }
-
-    void add_child(completion_item*, std::string);
-    void add_child(std::string);
+private:
+    void addChild(const std::string&);
+    void addChild(const CompletionItemProperties&);
+    void addChild(std::shared_ptr<CompletionItem>, const std::string&);
+    void addChild(std::shared_ptr<CompletionItem>, const CompletionItemProperties&);
 };
 
 struct completion_list {
     bool isIncomplete = false;
     std::optional<json> itemDefaults; // Not used
-    std::vector<completion_item> items;
+    std::vector<CompletionItemProperties> items;
 };
-void to_json(json& j, const completion_item& p);
+void to_json(json& j, const CompletionItemProperties& p);
 void to_json(json& j, const completion_list& p);
+
 
 #endif // COMPLETION_DEFINITIONS_H_

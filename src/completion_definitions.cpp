@@ -2,572 +2,518 @@
 #include "logger.h"
 #include <cctype>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-completion_item completion_item::root("root");
+std::shared_ptr<CompletionItem> CompletionItem::root = std::make_shared<CompletionItem>();
 
-void completion_item::initialize_tree() {
+void CompletionItem::initialize_tree() {
     // Google types not implemented
     // Is there a way to shorten this ?
     // Can it be done at compile time ?
 
-    completion_item SSLCertificate_CertSignature("SSLCertificate_CertSignature");
-    SSLCertificate_CertSignature.add_child("signature");
-    SSLCertificate_CertSignature.add_child("signature_algorithm");
 
-    completion_item SSLCertificate_EC("SSLCertificate_EC");
-    SSLCertificate_EC.add_child("oid");
-    SSLCertificate_EC.add_child("pub");
+    std::shared_ptr<CompletionItem> SSLCertificate_CertSignature = std::make_shared<CompletionItem>();
+    SSLCertificate_CertSignature->addChild("signature");
+    SSLCertificate_CertSignature->addChild("signature_algorithm");
 
-    completion_item SSLCertificate_AuthorityKeyId("SSLCertificate_AuthorityKeyId");
-    SSLCertificate_AuthorityKeyId.add_child("keyid");
-    SSLCertificate_AuthorityKeyId.add_child("serial_number");
+    std::shared_ptr<CompletionItem> SSLCertificate_EC = std::make_shared<CompletionItem>();
+    SSLCertificate_EC->addChild("oid");
+    SSLCertificate_EC->addChild("pub");
 
-    completion_item SSLCertificate_Extension("SSLCertificate_Extension");
-    SSLCertificate_Extension.add_child(&SSLCertificate_AuthorityKeyId, "authority_key_id");
-    SSLCertificate_Extension.add_child("ca");
-    SSLCertificate_Extension.add_child("ca_info_access");
-    SSLCertificate_Extension.add_child("cert_template_name_dc");
-    SSLCertificate_Extension.add_child("certificate_policies");
-    SSLCertificate_Extension.add_child("crl_distribution_points");
-    SSLCertificate_Extension.add_child("extended_key_usage");
-    SSLCertificate_Extension.add_child("key_usage");
-    SSLCertificate_Extension.add_child("netscape_cert_comment");
-    SSLCertificate_Extension.add_child("netscape_certificate");
-    SSLCertificate_Extension.add_child("old_authority_key_id");
-    SSLCertificate_Extension.add_child("pe_logotype");
-    SSLCertificate_Extension.add_child("subject_alternative_name");
-    SSLCertificate_Extension.add_child("subject_key_id");
+    std::shared_ptr<CompletionItem> SSLCertificate_AuthorityKeyId = std::make_shared<CompletionItem>();
+    SSLCertificate_AuthorityKeyId->addChild("keyid");
+    SSLCertificate_AuthorityKeyId->addChild("serial_number");
 
-    completion_item SSLCertificate_Subject("SSLCertificate_Subject");
-    SSLCertificate_Subject.add_child("common_name");
-    SSLCertificate_Subject.add_child("country_name");
-    SSLCertificate_Subject.add_child("locality");
-    SSLCertificate_Subject.add_child("organization");
-    SSLCertificate_Subject.add_child("organizational_unit");
-    SSLCertificate_Subject.add_child("state_or_province_name");
+    std::shared_ptr<CompletionItem> SSLCertificate_Extension = std::make_shared<CompletionItem>();
+    SSLCertificate_Extension->addChild(SSLCertificate_AuthorityKeyId, "authority_key_id");
+    SSLCertificate_Extension->addChild("ca");
+    SSLCertificate_Extension->addChild("ca_info_access");
+    SSLCertificate_Extension->addChild("cert_template_name_dc");
+    SSLCertificate_Extension->addChild("certificate_policies");
+    SSLCertificate_Extension->addChild("crl_distribution_points");
+    SSLCertificate_Extension->addChild("extended_key_usage");
+    SSLCertificate_Extension->addChild("key_usage");
+    SSLCertificate_Extension->addChild("netscape_cert_comment");
+    SSLCertificate_Extension->addChild("netscape_certificate");
+    SSLCertificate_Extension->addChild("old_authority_key_id");
+    SSLCertificate_Extension->addChild("pe_logotype");
+    SSLCertificate_Extension->addChild("subject_alternative_name");
+    SSLCertificate_Extension->addChild("subject_key_id");
 
-    completion_item SSLCertificate_Validity("SSLCertificate_Validity");
-    SSLCertificate_Validity.add_child("expiry_time");
-    SSLCertificate_Validity.add_child("issue_time");
+    std::shared_ptr<CompletionItem> SSLCertificate_Subject = std::make_shared<CompletionItem>();
+    SSLCertificate_Subject->addChild("common_name");
+    SSLCertificate_Subject->addChild("country_name");
+    SSLCertificate_Subject->addChild("locality");
+    SSLCertificate_Subject->addChild("organization");
+    SSLCertificate_Subject->addChild("organizational_unit");
+    SSLCertificate_Subject->addChild("state_or_province_name");
 
-    completion_item SSLCertificate("SSLCertificate");
-    SSLCertificate.add_child("cert_extensions");
-    SSLCertificate.add_child(&SSLCertificate_CertSignature, "cert_signature");
-    SSLCertificate.add_child(&SSLCertificate_EC, "ec");
-    SSLCertificate.add_child(&SSLCertificate_Extension, "extension");
-    SSLCertificate.add_child("first_seen_time");
-    SSLCertificate.add_child(&SSLCertificate_Subject, "issuer");
-    SSLCertificate.add_child("serial_number");
-    SSLCertificate.add_child("signature_algorithm");
-    SSLCertificate.add_child("size");
-    SSLCertificate.add_child(&SSLCertificate_Subject, "subject");
-    SSLCertificate.add_child("thumbprint");
-    SSLCertificate.add_child("thumbprint_sha256");
-    SSLCertificate.add_child(&SSLCertificate_Validity, "validity");
-    SSLCertificate.add_child("version");
+    std::shared_ptr<CompletionItem> SSLCertificate_Validity = std::make_shared<CompletionItem>();
+    SSLCertificate_Validity->addChild("expiry_time");
+    SSLCertificate_Validity->addChild("issue_time");
 
-    completion_item location("location");
-    location.add_child("city");
-    location.add_child("country_or_region");
-    location.add_child("desk_name");
-    location.add_child("floor_name");
-    location.add_child("name");
-    location.add_child("region_coordinates");
-    location.add_child("region_latitude");
-    location.add_child("region_longitude");
-    location.add_child("state");
+    std::shared_ptr<CompletionItem> SSLCertificate = std::make_shared<CompletionItem>();
+    SSLCertificate->addChild("cert_extensions");
+    SSLCertificate->addChild(SSLCertificate_CertSignature, "cert_signature");
+    SSLCertificate->addChild(SSLCertificate_EC, "ec");
+    SSLCertificate->addChild(SSLCertificate_Extension, "extension");
+    SSLCertificate->addChild("first_seen_time");
+    SSLCertificate->addChild(SSLCertificate_Subject, "issuer");
+    SSLCertificate->addChild("serial_number");
+    SSLCertificate->addChild("signature_algorithm");
+    SSLCertificate->addChild("size");
+    SSLCertificate->addChild(SSLCertificate_Subject, "subject");
+    SSLCertificate->addChild("thumbprint");
+    SSLCertificate->addChild("thumbprint_sha256");
+    SSLCertificate->addChild(SSLCertificate_Validity, "validity");
+    SSLCertificate->addChild("version");
 
-    completion_item dhcp_option("dhcp_option");
-    dhcp_option.add_child("code");
-    dhcp_option.add_child("data");
+    std::shared_ptr<CompletionItem> location = std::make_shared<CompletionItem>();
+    location->addChild("city");
+    location->addChild("country_or_region");
+    location->addChild("desk_name");
+    location->addChild("floor_name");
+    location->addChild("name");
+    location->addChild("region_coordinates");
+    location->addChild("region_latitude");
+    location->addChild("region_longitude");
+    location->addChild("state");
 
-    completion_item dhcp("dhcp");
-    dhcp.add_child("chaddr");
-    dhcp.add_child("ciaddr");
-    dhcp.add_child("client_hostname");
-    dhcp.add_child("client_identifier");
-    dhcp.add_child("file");
-    dhcp.add_child("flags");
-    dhcp.add_child("giaddr");
-    dhcp.add_child("hlen");
-    dhcp.add_child("hops");
-    dhcp.add_child("htype");
-    dhcp.add_child("lease_time_seconds");
-    dhcp.add_child("opcode");
-    dhcp.add_child(&dhcp_option, "options");
-    dhcp.add_child("requested_address");
-    dhcp.add_child("seconds");
-    dhcp.add_child("siaddr");
-    dhcp.add_child("sname");
-    dhcp.add_child("transaction_id");
-    dhcp.add_child("type");
-    dhcp.add_child("yiaddr");
+    std::shared_ptr<CompletionItem> dhcp_option = std::make_shared<CompletionItem>();
+    dhcp_option->addChild("code");
+    dhcp_option->addChild("data");
 
-    completion_item prevalence("prevalence");
-    prevalence.add_child("day_count");
-    prevalence.add_child("day_max");
-    prevalence.add_child("day_max_sub_domains");
-    prevalence.add_child("rolling_max");
-    prevalence.add_child("rolling_max_sub_domains");
+    std::shared_ptr<CompletionItem> dhcp = std::make_shared<CompletionItem>();
+    dhcp->addChild("chaddr");
+    dhcp->addChild("ciaddr");
+    dhcp->addChild("client_hostname");
+    dhcp->addChild("client_identifier");
+    dhcp->addChild("file");
+    dhcp->addChild("flags");
+    dhcp->addChild("giaddr");
+    dhcp->addChild("hlen");
+    dhcp->addChild("hops");
+    dhcp->addChild("htype");
+    dhcp->addChild("lease_time_seconds");
+    dhcp->addChild("opcode");
+    dhcp->addChild(dhcp_option, "options");
+    dhcp->addChild("requested_address");
+    dhcp->addChild("seconds");
+    dhcp->addChild("siaddr");
+    dhcp->addChild("sname");
+    dhcp->addChild("transaction_id");
+    dhcp->addChild("type");
+    dhcp->addChild("yiaddr");
 
-    completion_item dns_ResourceRecord("dns_ResourceRecord");
-    dns_ResourceRecord.add_child("binary_data");
-    dns_ResourceRecord.add_child("class");
-    dns_ResourceRecord.add_child("data");
-    dns_ResourceRecord.add_child("name");
-    dns_ResourceRecord.add_child("ttl");
-    dns_ResourceRecord.add_child("type");
+    std::shared_ptr<CompletionItem> prevalence = std::make_shared<CompletionItem>();
+    prevalence->addChild("day_count");
+    prevalence->addChild("day_max");
+    prevalence->addChild("day_max_sub_domains");
+    prevalence->addChild("rolling_max");
+    prevalence->addChild("rolling_max_sub_domains");
 
-    completion_item dns_Question("dns_Question");
-    dns_Question.add_child("class");
-    dns_Question.add_child("name");
-    dns_Question.add_child(&prevalence, "prevalence");
-    dns_Question.add_child("type");
+    std::shared_ptr<CompletionItem> dns_ResourceRecord = std::make_shared<CompletionItem>();
+    dns_ResourceRecord->addChild("binary_data");
+    dns_ResourceRecord->addChild("class");
+    dns_ResourceRecord->addChild("data");
+    dns_ResourceRecord->addChild("name");
+    dns_ResourceRecord->addChild("ttl");
+    dns_ResourceRecord->addChild("type");
 
-    completion_item dns("dns");
-    dns.add_child(&dns_ResourceRecord, "additional");
-    dns.add_child(&dns_ResourceRecord, "answers");
-    dns.add_child("authoritative");
-    dns.add_child(&dns_ResourceRecord, "authority");
-    dns.add_child("id");
-    dns.add_child("opcode");
-    dns.add_child(&dns_Question, "questions");
-    dns.add_child("recursion_available");
-    dns.add_child("recursion_desired");
-    dns.add_child("response");
-    dns.add_child("response_code");
-    dns.add_child("truncated");
+    std::shared_ptr<CompletionItem> dns_Question = std::make_shared<CompletionItem>();
+    dns_Question->addChild("class");
+    dns_Question->addChild("name");
+    dns_Question->addChild(prevalence, "prevalence");
+    dns_Question->addChild("type");
 
-    completion_item email("email");
-    email.add_child("bcc");
-    email.add_child("bounce_address");
-    email.add_child("cc");
-    email.add_child("from");
-    email.add_child("mail_id");
-    email.add_child("reply_to");
-    email.add_child("subject");
-    email.add_child("to");
+    std::shared_ptr<CompletionItem> dns = std::make_shared<CompletionItem>();
+    dns->addChild(dns_ResourceRecord, "additional");
+    dns->addChild(dns_ResourceRecord, "answers");
+    dns->addChild("authoritative");
+    dns->addChild(dns_ResourceRecord, "authority");
+    dns->addChild("id");
+    dns->addChild("opcode");
+    dns->addChild(dns_Question, "questions");
+    dns->addChild("recursion_available");
+    dns->addChild("recursion_desired");
+    dns->addChild("response");
+    dns->addChild("response_code");
+    dns->addChild("truncated");
 
-    completion_item ftp("ftp");
-    ftp.add_child("command");
+    std::shared_ptr<CompletionItem> email = std::make_shared<CompletionItem>();
+    email->addChild("bcc");
+    email->addChild("bounce_address");
+    email->addChild("cc");
+    email->addChild("from");
+    email->addChild("mail_id");
+    email->addChild("reply_to");
+    email->addChild("subject");
+    email->addChild("to");
 
-    completion_item http("http");
-    http.add_child("method");
-    http.add_child("parsed_user_agent");
-    http.add_child("referral_url");
-    http.add_child("response_code");
-    http.add_child("user_agent");
+    std::shared_ptr<CompletionItem> ftp = std::make_shared<CompletionItem>();
+    ftp->addChild("command");
 
-    completion_item certificate("certificate");
-    certificate.add_child("issuer");
-    certificate.add_child("md5");
-    certificate.add_child("not_after");
-    certificate.add_child("not_before");
-    certificate.add_child("serial");
-    certificate.add_child("sha1");
-    certificate.add_child("sha256");
-    certificate.add_child("subject");
-    certificate.add_child("version");
+    std::shared_ptr<CompletionItem> http = std::make_shared<CompletionItem>();
+    http->addChild("method");
+    http->addChild("parsed_user_agent");
+    http->addChild("referral_url");
+    http->addChild("response_code");
+    http->addChild("user_agent");
 
-    completion_item tls_server("tls_server");
-    tls_server.add_child("certificate");
-    tls_server.add_child("ja3s");
+    std::shared_ptr<CompletionItem> certificate = std::make_shared<CompletionItem>();
+    certificate->addChild("issuer");
+    certificate->addChild("md5");
+    certificate->addChild("not_after");
+    certificate->addChild("not_before");
+    certificate->addChild("serial");
+    certificate->addChild("sha1");
+    certificate->addChild("sha256");
+    certificate->addChild("subject");
+    certificate->addChild("version");
 
-    completion_item tls_client("tls_client");
-    tls_client.add_child(&certificate, "certificate");
-    tls_client.add_child("ja3");
-    tls_client.add_child("server_name");
-    tls_client.add_child("supported_ciphers");
+    std::shared_ptr<CompletionItem> tls_server = std::make_shared<CompletionItem>();
+    tls_server->addChild("certificate");
+    tls_server->addChild("ja3s");
 
-    completion_item tls("tls");
-    tls.add_child("cipher");
-    tls.add_child(&tls_client, "client");
-    tls.add_child("curve");
-    tls.add_child("established");
-    tls.add_child("next_protocol");
-    tls.add_child("resumed");
-    tls.add_child(&tls_server, "server");
-    tls.add_child("version");
-    tls.add_child("version_protocol");
+    std::shared_ptr<CompletionItem> tls_client = std::make_shared<CompletionItem>();
+    tls_client->addChild(certificate, "certificate");
+    tls_client->addChild("ja3");
+    tls_client->addChild("server_name");
+    tls_client->addChild("supported_ciphers");
 
-    completion_item network("network");
-    network.add_child("application_protocol");
-    network.add_child("application_protocol_version");
-    network.add_child("asn");
-    network.add_child("carrier_name");
-    network.add_child("community_id");
-    network.add_child(&dhcp, "dhcp");
-    network.add_child("direction");
-    network.add_child(&dns, "dns");
-    network.add_child("dns_domain");
-    network.add_child(&email, "email");
-    network.add_child(&ftp, "ftp");
-    network.add_child(&http, "http");
-    network.add_child("ip_protocol");
-    network.add_child("ip_subnet_range");
-    network.add_child("organization_name");
-    network.add_child("parent_session_id");
-    network.add_child("received_bytes");
-    network.add_child("received_packets");
-    network.add_child("sent_bytes");
-    network.add_child("sent_packets");
-    network.add_child("session_duration");
-    network.add_child("session_id");
-    network.add_child("smtp");
-    network.add_child(&tls, "tls");
+    std::shared_ptr<CompletionItem> tls = std::make_shared<CompletionItem>();
+    tls->addChild("cipher");
+    tls->addChild(tls_client, "client");
+    tls->addChild("curve");
+    tls->addChild("established");
+    tls->addChild("next_protocol");
+    tls->addChild("resumed");
+    tls->addChild(tls_server, "server");
+    tls->addChild("version");
+    tls->addChild("version_protocol");
 
-    completion_item artifact("artifact");
-    artifact.add_child("as_owner");
-    artifact.add_child("asn");
-    artifact.add_child("first_seen_time");
-    artifact.add_child("ip");
-    artifact.add_child("jarm");
-    artifact.add_child(&SSLCertificate, "last_http_certificate");
-    artifact.add_child("last_https_certificate_date");
-    artifact.add_child("last_seen_time");
-    artifact.add_child(&location, "location");
-    artifact.add_child(&network, "network");
-    artifact.add_child(&prevalence, "prevalence");
-    artifact.add_child("regional_internet_registry");
-    artifact.add_child("tags");
-    artifact.add_child("whois");
-    artifact.add_child("whois_date");
+    std::shared_ptr<CompletionItem> network = std::make_shared<CompletionItem>();
+    network->addChild("application_protocol");
+    network->addChild("application_protocol_version");
+    network->addChild("asn");
+    network->addChild("carrier_name");
+    network->addChild("community_id");
+    network->addChild(dhcp, "dhcp");
+    network->addChild("direction");
+    network->addChild(dns, "dns");
+    network->addChild("dns_domain");
+    network->addChild(email, "email");
+    network->addChild(ftp, "ftp");
+    network->addChild(http, "http");
+    network->addChild("ip_protocol");
+    network->addChild("ip_subnet_range");
+    network->addChild("organization_name");
+    network->addChild("parent_session_id");
+    network->addChild("received_bytes");
+    network->addChild("received_packets");
+    network->addChild("sent_bytes");
+    network->addChild("sent_packets");
+    network->addChild("session_duration");
+    network->addChild("session_id");
+    network->addChild("smtp");
+    network->addChild(tls, "tls");
 
-    completion_item resource_circular("resource_circular");
-    resource_circular.add_child("id");
-    resource_circular.add_child("name");
-    resource_circular.add_child("parent");
-    resource_circular.add_child("product_object_id");
-    resource_circular.add_child("resource_subtype");
-    resource_circular.add_child("resource_type");
-    resource_circular.add_child("type");
+    std::shared_ptr<CompletionItem> artifact = std::make_shared<CompletionItem>();
+    artifact->addChild("as_owner");
+    artifact->addChild("asn");
+    artifact->addChild("first_seen_time");
+    artifact->addChild("ip");
+    artifact->addChild("jarm");
+    artifact->addChild(SSLCertificate, "last_http_certificate");
+    artifact->addChild("last_https_certificate_date");
+    artifact->addChild("last_seen_time");
+    artifact->addChild(location, "location");
+    artifact->addChild(network, "network");
+    artifact->addChild(prevalence, "prevalence");
+    artifact->addChild("regional_internet_registry");
+    artifact->addChild("tags");
+    artifact->addChild("whois");
+    artifact->addChild("whois_date");
 
-    completion_item cloud("cloud");
-    cloud.add_child("availability_zone");
-    cloud.add_child("environment");
-    cloud.add_child(&resource_circular, "project");
-    cloud.add_child(&resource_circular, "vpc");
+    std::shared_ptr<CompletionItem> resource_circular = std::make_shared<CompletionItem>();
+    resource_circular->addChild("id");
+    resource_circular->addChild("name");
+    resource_circular->addChild("parent");
+    resource_circular->addChild("product_object_id");
+    resource_circular->addChild("resource_subtype");
+    resource_circular->addChild("resource_type");
+    resource_circular->addChild("type");
 
-    completion_item label("label");
-    label.add_child("key");
-    label.add_child("rbac_enabled");
-    label.add_child("value");
+    std::shared_ptr<CompletionItem> cloud = std::make_shared<CompletionItem>();
+    cloud->addChild("availability_zone");
+    cloud->addChild("environment");
+    cloud->addChild(resource_circular, "project");
+    cloud->addChild(resource_circular, "vpc");
 
-    completion_item permission("permission");
-    permission.add_child("description");
-    permission.add_child("name");
-    permission.add_child("type");
+    std::shared_ptr<CompletionItem> label = std::make_shared<CompletionItem>();
+    label->addChild("key");
+    label->addChild("rbac_enabled");
+    label->addChild("value");
 
-    completion_item role("role");
-    role.add_child("description");
-    role.add_child("name");
-    role.add_child("type");
+    std::shared_ptr<CompletionItem> permission = std::make_shared<CompletionItem>();
+    permission->addChild("description");
+    permission->addChild("name");
+    permission->addChild("type");
 
-    completion_item attribute("attribute");
-    attribute.add_child(&cloud, "cloud");
-    attribute.add_child("creation_time");
-    attribute.add_child(&label, "labels");
-    attribute.add_child("last_update_time");
-    attribute.add_child(&permission, "permissions");
-    attribute.add_child(&role, "roles");
+    std::shared_ptr<CompletionItem> role = std::make_shared<CompletionItem>();
+    role->addChild("description");
+    role->addChild("name");
+    role->addChild("type");
 
-    completion_item resource("resource");
-    resource.add_child(&attribute, "attribute");
-    resource.add_child("id");
-    resource.add_child("name");
-    resource.add_child("parent");
-    resource.add_child("product_object_id");
-    resource.add_child("resource_subtype");
-    resource.add_child("resource_type");
-    resource.add_child("type");
+    std::shared_ptr<CompletionItem> attribute = std::make_shared<CompletionItem>();
+    attribute->addChild(cloud, "cloud");
+    attribute->addChild("creation_time");
+    attribute->addChild(label, "labels");
+    attribute->addChild("last_update_time");
+    attribute->addChild(permission, "permissions");
+    attribute->addChild(role, "roles");
 
-    completion_item hardware("hardware");
-    hardware.add_child("cpu_clock_speed");
-    hardware.add_child("cpu_max_clock_speed");
-    hardware.add_child("cpu_model");
-    hardware.add_child("cpu_number_cores");
-    hardware.add_child("cpu_platform");
-    hardware.add_child("manufacturer");
-    hardware.add_child("model");
-    hardware.add_child("ram");
-    hardware.add_child("serial_number");
+    std::shared_ptr<CompletionItem> resource = std::make_shared<CompletionItem>();
+    resource->addChild(attribute, "attribute");
+    resource->addChild("id");
+    resource->addChild("name");
+    resource->addChild("parent");
+    resource->addChild("product_object_id");
+    resource->addChild("resource_subtype");
+    resource->addChild("resource_type");
+    resource->addChild("type");
 
-    completion_item platformSoftware("platformSoftware");
-    platformSoftware.add_child("platform");
-    platformSoftware.add_child("platform_patch_level");
-    platformSoftware.add_child("platform_version");
+    std::shared_ptr<CompletionItem> hardware = std::make_shared<CompletionItem>();
+    hardware->addChild("cpu_clock_speed");
+    hardware->addChild("cpu_max_clock_speed");
+    hardware->addChild("cpu_model");
+    hardware->addChild("cpu_number_cores");
+    hardware->addChild("cpu_platform");
+    hardware->addChild("manufacturer");
+    hardware->addChild("model");
+    hardware->addChild("ram");
+    hardware->addChild("serial_number");
 
-    completion_item software("software");
-    software.add_child("description");
-    software.add_child("name");
-    software.add_child(&permission, "permissions");
-    software.add_child("vendor_name");
-    software.add_child("version");
+    std::shared_ptr<CompletionItem> platformSoftware = std::make_shared<CompletionItem>();
+    platformSoftware->addChild("platform");
+    platformSoftware->addChild("platform_patch_level");
+    platformSoftware->addChild("platform_version");
 
-    completion_item vulnerability("vulnerability");
-    //vulnerability.add_child(&noun_circular, "about");
-    vulnerability.add_child("cve_description");
-    vulnerability.add_child("cve_id");
-    vulnerability.add_child("cvss_base_score");
-    vulnerability.add_child("cvss_vector");
-    vulnerability.add_child("cvss_version");
-    vulnerability.add_child("description");
-    vulnerability.add_child("first_found");
-    vulnerability.add_child("last_found");
-    vulnerability.add_child("name");
-    vulnerability.add_child("scan_end_time");
-    vulnerability.add_child("scan_start_time");
-    vulnerability.add_child("severity");
-    vulnerability.add_child("severity_details");
-    vulnerability.add_child("vendor");
-    vulnerability.add_child("vendor_knowledge_base_article_id");
-    vulnerability.add_child("vendor_vulnerability_id");
+    std::shared_ptr<CompletionItem> software = std::make_shared<CompletionItem>();
+    software->addChild("description");
+    software->addChild("name");
+    software->addChild(permission, "permissions");
+    software->addChild("vendor_name");
+    software->addChild("version");
 
-    completion_item asset("asset");
-    asset.add_child("asset_id");
-    asset.add_child(&attribute, "attribute");
-    asset.add_child("category");
-    asset.add_child("creation_time");
-    asset.add_child("deployment_status");
-    asset.add_child("first_discover_time");
-    asset.add_child("first_seen_time");
-    asset.add_child(&hardware, "hardware");
-    asset.add_child("hostname");
-    asset.add_child("ip");
-    asset.add_child(&label, "labels");
-    asset.add_child("last_boot_time");
-    asset.add_child("last_discover_time");
-    asset.add_child(&location, "location");
-    asset.add_child("mac");
-    asset.add_child("nat_ip");
-    asset.add_child("network_domain");
-    asset.add_child(&platformSoftware, "platform_software");
-    asset.add_child("product_object_id");
-    asset.add_child(&software, "software");
-    asset.add_child("system_last_update_time");
-    asset.add_child("type");
-    asset.add_child(&vulnerability, "vulnerabilities");
+    std::shared_ptr<CompletionItem> vulnerability = std::make_shared<CompletionItem>();
+    //vulnerability->addChild(noun_circular, "about");
+    vulnerability->addChild("cve_description");
+    vulnerability->addChild("cve_id");
+    vulnerability->addChild("cvss_base_score");
+    vulnerability->addChild("cvss_vector");
+    vulnerability->addChild("cvss_version");
+    vulnerability->addChild("description");
+    vulnerability->addChild("first_found");
+    vulnerability->addChild("last_found");
+    vulnerability->addChild("name");
+    vulnerability->addChild("scan_end_time");
+    vulnerability->addChild("scan_start_time");
+    vulnerability->addChild("severity");
+    vulnerability->addChild("severity_details");
+    vulnerability->addChild("vendor");
+    vulnerability->addChild("vendor_knowledge_base_article_id");
+    vulnerability->addChild("vendor_vulnerability_id");
 
-    completion_item timeOff("timeOff");
-    timeOff.add_child("description");
-    timeOff.add_child("interval");
+    std::shared_ptr<CompletionItem> asset = std::make_shared<CompletionItem>();
+    asset->addChild("asset_id");
+    asset->addChild(attribute, "attribute");
+    asset->addChild("category");
+    asset->addChild("creation_time");
+    asset->addChild("deployment_status");
+    asset->addChild("first_discover_time");
+    asset->addChild("first_seen_time");
+    asset->addChild(hardware, "hardware");
+    asset->addChild("hostname");
+    asset->addChild("ip");
+    asset->addChild(label, "labels");
+    asset->addChild("last_boot_time");
+    asset->addChild("last_discover_time");
+    asset->addChild(location, "location");
+    asset->addChild("mac");
+    asset->addChild("nat_ip");
+    asset->addChild("network_domain");
+    asset->addChild(platformSoftware, "platform_software");
+    asset->addChild("product_object_id");
+    asset->addChild(software, "software");
+    asset->addChild("system_last_update_time");
+    asset->addChild("type");
+    asset->addChild(vulnerability, "vulnerabilities");
 
-    completion_item user("user");
-    user.add_child("account_expiration_time");
-    user.add_child("account_lockout_time");
-    user.add_child("account_type");
-    user.add_child(&attribute, "attribute");
-    user.add_child("company_name");
-    user.add_child("department");
-    user.add_child("email_addresses");
-    user.add_child("employee_id");
-    user.add_child("first_name");
-    user.add_child("first_seen_time");
-    user.add_child("group_identifiers");
-    user.add_child("groupid");
-    user.add_child("hire_date");
-    user.add_child("last_bad_password_attempt_time");
-    user.add_child("last_login_time");
-    user.add_child("last_name");
-    user.add_child("last_password_change_time");
-    user.add_child("middle_name");
-    user.add_child(&location, "office_address");
-    user.add_child("password_expiration_time");
-    user.add_child(&location, "personal_address");
-    user.add_child("phone_numbers");
-    user.add_child("product_object_id");
-    user.add_child("role_description");
-    user.add_child("role_name");
-    user.add_child("termination_date");
-    user.add_child(&timeOff, "time_off");
-    user.add_child("title");
-    user.add_child("user_authentication_status");
-    user.add_child("user_display_name");
-    user.add_child("user_role");
-    user.add_child("userid");
-    user.add_child("windows_sid");
-    user.add_child(&user, "managers");
+    std::shared_ptr<CompletionItem> timeOff = std::make_shared<CompletionItem>();
+    timeOff->addChild("description");
+    timeOff->addChild("interval");
 
-    completion_item domain("domain");
-    domain.add_child("admin");
-    domain.add_child("audit_update_time");
-    domain.add_child("billing");
-    domain.add_child("categories");
-    domain.add_child("contact_email");
-    domain.add_child("creation_time");
-    domain.add_child("expiration_time");
-    domain.add_child("favicon");
-    domain.add_child("first_seen_time");
-    domain.add_child("iana_registrar_id");
-    domain.add_child("jarm");
-    domain.add_child("last_dns_records");
-    domain.add_child("last_dns_records_time");
-    domain.add_child("last_https_certificate");
-    domain.add_child("last_https_certificate_time");
-    domain.add_child("last_seen_time");
-    domain.add_child("name");
-    domain.add_child("name_server");
-    domain.add_child("popularity_ranks");
-    domain.add_child("prevalence");
-    domain.add_child("private_registration");
-    domain.add_child("registrant");
-    domain.add_child("registrar");
-    domain.add_child("registry_data_raw_text");
-    domain.add_child("status");
-    domain.add_child("tags");
-    domain.add_child("tech");
-    domain.add_child("update_time");
-    domain.add_child("whois_record_raw_text");
-    domain.add_child("whois_server");
-    domain.add_child("whois_time");
-    domain.add_child("zone");
+    std::shared_ptr<CompletionItem> user = std::make_shared<CompletionItem>();
+    user->addChild("account_expiration_time");
+    user->addChild("account_lockout_time");
+    user->addChild("account_type");
+    user->addChild(attribute, "attribute");
+    user->addChild("company_name");
+    user->addChild("department");
+    user->addChild("email_addresses");
+    user->addChild("employee_id");
+    user->addChild("first_name");
+    user->addChild("first_seen_time");
+    user->addChild("group_identifiers");
+    user->addChild("groupid");
+    user->addChild("hire_date");
+    user->addChild("last_bad_password_attempt_time");
+    user->addChild("last_login_time");
+    user->addChild("last_name");
+    user->addChild("last_password_change_time");
+    user->addChild("middle_name");
+    user->addChild(location, "office_address");
+    user->addChild("password_expiration_time");
+    user->addChild(location, "personal_address");
+    user->addChild("phone_numbers");
+    user->addChild("product_object_id");
+    user->addChild("role_description");
+    user->addChild("role_name");
+    user->addChild("termination_date");
+    user->addChild(timeOff, "time_off");
+    user->addChild("title");
+    user->addChild("user_authentication_status");
+    user->addChild("user_display_name");
+    user->addChild("user_role");
+    user->addChild("userid");
+    user->addChild("windows_sid");
+    user->addChild(user, "managers");
 
-    completion_item noun("noun");
-    noun.add_child("administrative_domain");
-    noun.add_child("application");
-    noun.add_child(&artifact, "artifact");
-    noun.add_child(&asset, "asset");
-    noun.add_child("asset_id");
-    noun.add_child(&cloud, "cloud");
-    noun.add_child("domain");
-    noun.add_child("email");
-    noun.add_child("file");
-    noun.add_child("group");
-    noun.add_child("hostname");
-    noun.add_child("investigation");
-    noun.add_child("ip");
-    noun.add_child("ip_geo_artifact");
-    noun.add_child("ip_location");
-    noun.add_child("labels");
-    noun.add_child("location");
-    noun.add_child("mac");
-    noun.add_child("namespace");
-    noun.add_child("nat_ip");
-    noun.add_child("nat_port");
-    noun.add_child("network");
-    noun.add_child("object_reference");
-    noun.add_child("platform");
-    noun.add_child("platform_patch_level");
-    noun.add_child("platform_version");
-    noun.add_child("port");
-    noun.add_child("process");
-    noun.add_child("process_ancestors");
-    noun.add_child("registry");
-    noun.add_child("resource");
-    noun.add_child("resource_ancestors");
-    noun.add_child("security_result");
-    noun.add_child("url");
-    noun.add_child("url_metadata");
-    noun.add_child("user");
-    noun.add_child("user_management_chain");
+    std::shared_ptr<CompletionItem> domain = std::make_shared<CompletionItem>();
+    domain->addChild("admin");
+    domain->addChild("audit_update_time");
+    domain->addChild("billing");
+    domain->addChild("categories");
+    domain->addChild("contact_email");
+    domain->addChild("creation_time");
+    domain->addChild("expiration_time");
+    domain->addChild("favicon");
+    domain->addChild("first_seen_time");
+    domain->addChild("iana_registrar_id");
+    domain->addChild("jarm");
+    domain->addChild("last_dns_records");
+    domain->addChild("last_dns_records_time");
+    domain->addChild("last_https_certificate");
+    domain->addChild("last_https_certificate_time");
+    domain->addChild("last_seen_time");
+    domain->addChild("name");
+    domain->addChild("name_server");
+    domain->addChild("popularity_ranks");
+    domain->addChild("prevalence");
+    domain->addChild("private_registration");
+    domain->addChild("registrant");
+    domain->addChild("registrar");
+    domain->addChild("registry_data_raw_text");
+    domain->addChild("status");
+    domain->addChild("tags");
+    domain->addChild("tech");
+    domain->addChild("update_time");
+    domain->addChild("whois_record_raw_text");
+    domain->addChild("whois_server");
+    domain->addChild("whois_time");
+    domain->addChild("zone");
 
-    root.add_child(&noun, "about");
-    root.add_child(&noun, "intermediary");
-    root.add_child(&noun, "observer");
-    root.add_child(&noun, "principal");
-    root.add_child(&noun, "src");
-    root.add_child(&noun, "target");
-}
+    std::shared_ptr<CompletionItem> noun = std::make_shared<CompletionItem>();
+    noun->addChild("administrative_domain");
+    noun->addChild("application");
+    noun->addChild(artifact, "artifact");
+    noun->addChild(asset, "asset");
+    noun->addChild("asset_id");
+    noun->addChild(cloud, "cloud");
+    noun->addChild("domain");
+    noun->addChild("email");
+    noun->addChild("file");
+    noun->addChild("group");
+    noun->addChild("hostname");
+    noun->addChild("investigation");
+    noun->addChild("ip");
+    noun->addChild("ip_geo_artifact");
+    noun->addChild("ip_location");
+    noun->addChild("labels");
+    noun->addChild("location");
+    noun->addChild("mac");
+    noun->addChild("namespace");
+    noun->addChild("nat_ip");
+    noun->addChild("nat_port");
+    noun->addChild("network");
+    noun->addChild("object_reference");
+    noun->addChild("platform");
+    noun->addChild("platform_patch_level");
+    noun->addChild("platform_version");
+    noun->addChild("port");
+    noun->addChild("process");
+    noun->addChild("process_ancestors");
+    noun->addChild("registry");
+    noun->addChild("resource");
+    noun->addChild("resource_ancestors");
+    noun->addChild("security_result");
+    noun->addChild("url");
+    noun->addChild("url_metadata");
+    noun->addChild("user");
+    noun->addChild("user_management_chain");
 
-void completion_item::add_child(completion_item *k, std::string new_label) {
-    children.push_back(completion_item(*k, new_label));
-}
-
-void completion_item::add_child(std::string new_label) {
-    children.push_back(completion_item(new_label));
-}
-
-const std::string completion_item::getLabel() const {
-    return label;
+    root->addChild(noun, "about");
+    root->addChild(noun, "intermediary");
+    root->addChild(noun, "observer");
+    root->addChild(noun, "principal");
+    root->addChild(noun, "src");
+    root->addChild(noun, "target");
 }
 
 
-const std::optional<json> completion_item::getLabelDetails() const {
-    return labelDetails;
+bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs) {
+        return lhs.label == rhs.label;
 }
 
 
-const std::optional<json> completion_item::getKind() const {
-    return kind;
+void CompletionItem::addChild(const std::string& label) {
+    children[CompletionItemProperties(label)] = nullptr;
 }
 
-
-const std::optional<json> completion_item::getTags() const {
-    return tags;
+void CompletionItem::addChild(const CompletionItemProperties& property) {
+    children[property] = nullptr;
 }
 
-
-const std::optional<json> completion_item::getDetail() const {
-    return detail;
+void CompletionItem::addChild(std::shared_ptr<CompletionItem> ptr, const std::string& label) {
+    children[CompletionItemProperties(label)] = ptr;
 }
 
-
-const std::optional<json> completion_item::getDocumentation() const {
-    return documentation;
+void CompletionItem::addChild(std::shared_ptr<CompletionItem> ptr, const CompletionItemProperties& property) {
+    children[property] = ptr;
 }
 
-
-const std::optional<json> completion_item::getPreselect() const {
-    return preselect;
-}
-
-
-const std::optional<json> completion_item::getSortText() const {
-    return sortText;
-}
-
-
-const std::optional<json> completion_item::getFilterText() const {
-    return filterText;
-}
-
-
-const std::optional<json> completion_item::getInsertText() const {
-    return insertText;
-}
-
-
-const std::optional<json> completion_item::getInsertTextFormat() const {
-    return insertTextFormat;
-}
-
-
-const std::optional<json> completion_item::getInsertTextMode() const {
-    return insertTextMode;
-}
-
-
-const std::optional<json> completion_item::getTextEdit() const {
-    return textEdit;
-}
-
-
-const std::optional<json> completion_item::getTextEditText() const {
-    return textEditText;
-}
-
-
-const std::optional<json> completion_item::getAdditionalTextEdits() const {
-    return additionalTextEdits;
-}
-
-
-const std::optional<json> completion_item::getCommitCharacters() const {
-    return commitCharacters;
-}
-
-
-const std::optional<json> completion_item::getCommand() const {
-    return command;
-}
-
-
-const std::optional<json> completion_item::getData() const {
-    return data;
-}
+const std::string& CompletionItemProperties::getLabel() const {return label;}
+const std::optional<json> CompletionItemProperties::getLabelDetails() const {return labelDetails;}
+const std::optional<json> CompletionItemProperties::getKind() const {return kind;}
+const std::optional<json> CompletionItemProperties::getTags() const {return tags;}
+const std::optional<json> CompletionItemProperties::getDetail() const {return detail;}
+const std::optional<json> CompletionItemProperties::getDocumentation() const {return documentation;}
+const std::optional<json> CompletionItemProperties::getPreselect() const {return preselect;}
+const std::optional<json> CompletionItemProperties::getSortText() const {return sortText;}
+const std::optional<json> CompletionItemProperties::getFilterText() const {return filterText;}
+const std::optional<json> CompletionItemProperties::getInsertText() const {return insertText;}
+const std::optional<json> CompletionItemProperties::getInsertTextFormat() const {return insertTextFormat;}
+const std::optional<json> CompletionItemProperties::getInsertTextMode() const {return insertTextMode;}
+const std::optional<json> CompletionItemProperties::getTextEdit() const {return textEdit;}
+const std::optional<json> CompletionItemProperties::getTextEditText() const {return textEditText;}
+const std::optional<json> CompletionItemProperties::getAdditionalTextEdits() const {return additionalTextEdits;}
+const std::optional<json> CompletionItemProperties::getCommitCharacters() const {return commitCharacters;}
+const std::optional<json> CompletionItemProperties::getCommand() const {return command;}
+const std::optional<json> CompletionItemProperties::getData() const {return data;}
 
 
 template <class T>
@@ -576,7 +522,7 @@ void add_if_present(json& j, std::string name, const std::optional<T>& opt) {
         j[name]=opt.value();
 }
 
-void to_json(json& j, const completion_item& i) {
+void to_json(json& j, const CompletionItemProperties& i) {
     j = json{ {"label", i.getLabel()}};
     add_if_present(j, "labelDetails", i.getLabelDetails());
     add_if_present(j, "kind", i.getKind());
@@ -607,10 +553,10 @@ void to_json(json& j, const completion_list& p) {
 }
 
 
-const completion_item* completion_item::getChildByName(std::string name) const {
-    for (const auto& item : children) {
-        if (item.label == name)
-            return &item;
+const std::shared_ptr<CompletionItem> CompletionItem::getChildByName(std::string name) const {
+    for (const auto& pair : children) {
+        if (pair.first == name)
+            return pair.second;
     }
     return nullptr;
 }
@@ -635,6 +581,7 @@ std::string getCurrentExpression(const std::string& line, size_t pos) {
     return line.substr(start, end - start);
 }
 
+
 bool isEndDelim(char lastDelim, char c) {
     switch (lastDelim) {
     case '`':
@@ -653,11 +600,11 @@ bool isStartDelim(char c) {
     return c == '[' || c == ']' || c == '`' || c == '\'' || c == '/' || c == '\"';
 }
 
-std::vector<completion_item> completion_item::get_completion_list(const std::string& line, int pos) {
+const std::vector<CompletionItemProperties> CompletionItem::getCompletionList(const std::string& line, int pos) {
     std::string expression = getCurrentExpression(line, pos);
 
     std::stringstream ss;
-    const completion_item* current = nullptr;
+    std::shared_ptr<CompletionItem> current = nullptr;
 
     size_t len = expression.length();
     bool ignore = false;
@@ -682,7 +629,7 @@ std::vector<completion_item> completion_item::get_completion_list(const std::str
             if (current == nullptr) {
                 if (noun.empty() || noun[0] != '$') // Syntaxe error
                     break;
-                current = &root; // Initialize root with event name like '$my_event'
+                current = root; // Initialize root with event name like '$my_event'
             } else {
                 current = current->getChildByName(noun);
                 if (current == nullptr) // Not found
@@ -697,9 +644,12 @@ std::vector<completion_item> completion_item::get_completion_list(const std::str
 
     }
 
-
-
+    std::vector<CompletionItemProperties> res;
     if (current == nullptr)
-        return std::vector<completion_item>();
-    return current->children;
+        return res;
+
+    for (const auto& pair : current->children) {
+        res.push_back(pair.first);
+    }
+    return res;
 }

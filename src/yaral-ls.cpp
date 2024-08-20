@@ -12,7 +12,7 @@
 int main(/*int argc, char *argv[]*/) {
   print_footprint();
 
-  completion_item::initialize_tree();
+  CompletionItem::initialize_tree();
 
   while (true) {
     RPCHandler::getInstance().listen();
