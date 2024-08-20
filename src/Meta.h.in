@@ -1,0 +1,8 @@
+#ifndef META_H_
+#define META_H_
+
+#define AUTHOR "@AUTHOR@"
+#define SERVER_VERSION "@yaral-ls_VERSION_MAJOR@.@yaral-ls_VERSION_MINOR@"
+#define SERVER_NAME "@SERVER_NAME@"
+
+#endif // META_H_
