@@ -10,10 +10,19 @@
 std::shared_ptr<CompletionItem> CompletionItem::root = std::make_shared<CompletionItem>();
 
 void CompletionItem::initialize_tree() {
-    // Google types not implemented
+    // Google types not (or partially) implemented
+    // Graph Entity not implemented
     // Is there a way to shorten this ?
     // Can it be done at compile time ?
 
+    std::shared_ptr<CompletionItem> noun = std::make_shared<CompletionItem>();
+
+    std::shared_ptr<CompletionItem> keyValuePair = std::make_shared<CompletionItem>();
+    keyValuePair->addChild("key");
+    keyValuePair->addChild("value");
+
+    std::shared_ptr<CompletionItem> protobufStruct = std::make_shared<CompletionItem>();
+    protobufStruct->addChild(keyValuePair, "fields");
 
     std::shared_ptr<CompletionItem> SSLCertificate_CertSignature = std::make_shared<CompletionItem>();
     SSLCertificate_CertSignature->addChild("signature");
@@ -56,7 +65,7 @@ void CompletionItem::initialize_tree() {
     SSLCertificate_Validity->addChild("issue_time");
 
     std::shared_ptr<CompletionItem> SSLCertificate = std::make_shared<CompletionItem>();
-    SSLCertificate->addChild("cert_extensions");
+    SSLCertificate->addChild(protobufStruct, "cert_extensions");
     SSLCertificate->addChild(SSLCertificate_CertSignature, "cert_signature");
     SSLCertificate->addChild(SSLCertificate_EC, "ec");
     SSLCertificate->addChild(SSLCertificate_Extension, "extension");
@@ -238,20 +247,12 @@ void CompletionItem::initialize_tree() {
     artifact->addChild("whois");
     artifact->addChild("whois_date");
 
-    std::shared_ptr<CompletionItem> resource_circular = std::make_shared<CompletionItem>();
-    resource_circular->addChild("id");
-    resource_circular->addChild("name");
-    resource_circular->addChild("parent");
-    resource_circular->addChild("product_object_id");
-    resource_circular->addChild("resource_subtype");
-    resource_circular->addChild("resource_type");
-    resource_circular->addChild("type");
-
+    std::shared_ptr<CompletionItem> resource = std::make_shared<CompletionItem>();
     std::shared_ptr<CompletionItem> cloud = std::make_shared<CompletionItem>();
     cloud->addChild("availability_zone");
     cloud->addChild("environment");
-    cloud->addChild(resource_circular, "project");
-    cloud->addChild(resource_circular, "vpc");
+    cloud->addChild(resource, "project");
+    cloud->addChild(resource, "vpc");
 
     std::shared_ptr<CompletionItem> label = std::make_shared<CompletionItem>();
     label->addChild("key");
@@ -276,7 +277,8 @@ void CompletionItem::initialize_tree() {
     attribute->addChild(permission, "permissions");
     attribute->addChild(role, "roles");
 
-    std::shared_ptr<CompletionItem> resource = std::make_shared<CompletionItem>();
+    // Definition is above
+    //std::shared_ptr<CompletionItem> resource = std::make_shared<CompletionItem>();
     resource->addChild(attribute, "attribute");
     resource->addChild("id");
     resource->addChild("name");
@@ -310,7 +312,7 @@ void CompletionItem::initialize_tree() {
     software->addChild("version");
 
     std::shared_ptr<CompletionItem> vulnerability = std::make_shared<CompletionItem>();
-    //vulnerability->addChild(noun_circular, "about");
+    vulnerability->addChild(noun, "about");
     vulnerability->addChild("cve_description");
     vulnerability->addChild("cve_id");
     vulnerability->addChild("cvss_base_score");
@@ -375,6 +377,7 @@ void CompletionItem::initialize_tree() {
     user->addChild("last_login_time");
     user->addChild("last_name");
     user->addChild("last_password_change_time");
+    user->addChild(user, "managers");
     user->addChild("middle_name");
     user->addChild(location, "office_address");
     user->addChild("password_expiration_time");
@@ -391,85 +394,454 @@ void CompletionItem::initialize_tree() {
     user->addChild("user_role");
     user->addChild("userid");
     user->addChild("windows_sid");
-    user->addChild(user, "managers");
+
+    std::shared_ptr<CompletionItem> favicon = std::make_shared<CompletionItem>();
+    favicon->addChild(user, "dhash");
+    favicon->addChild(user, "raw_md5");
+
+    std::shared_ptr<CompletionItem> dnsRecord = std::make_shared<CompletionItem>();
+    dnsRecord->addChild(user, "expire");
+    dnsRecord->addChild(user, "minimum");
+    dnsRecord->addChild(user, "priority");
+    dnsRecord->addChild(user, "refresh");
+    dnsRecord->addChild(user, "retry");
+    dnsRecord->addChild(user, "rname");
+    dnsRecord->addChild(user, "serial");
+    dnsRecord->addChild(user, "ttl");
+    dnsRecord->addChild(user, "type");
+    dnsRecord->addChild(user, "value");
+
+    std::shared_ptr<CompletionItem> popularityRank = std::make_shared<CompletionItem>();
+    popularityRank->addChild(user, "giver");
+    popularityRank->addChild(user, "ingestion_time");
+    popularityRank->addChild(user, "rank");
 
     std::shared_ptr<CompletionItem> domain = std::make_shared<CompletionItem>();
-    domain->addChild("admin");
+    domain->addChild(user, "admin");
     domain->addChild("audit_update_time");
-    domain->addChild("billing");
+    domain->addChild(user, "billing");
     domain->addChild("categories");
     domain->addChild("contact_email");
     domain->addChild("creation_time");
     domain->addChild("expiration_time");
-    domain->addChild("favicon");
+    domain->addChild(favicon, "favicon");
     domain->addChild("first_seen_time");
     domain->addChild("iana_registrar_id");
     domain->addChild("jarm");
-    domain->addChild("last_dns_records");
+    domain->addChild(dnsRecord, "last_dns_records");
     domain->addChild("last_dns_records_time");
-    domain->addChild("last_https_certificate");
+    domain->addChild(SSLCertificate, "last_https_certificate");
     domain->addChild("last_https_certificate_time");
     domain->addChild("last_seen_time");
     domain->addChild("name");
     domain->addChild("name_server");
-    domain->addChild("popularity_ranks");
-    domain->addChild("prevalence");
+    domain->addChild(popularityRank, "popularity_ranks");
+    domain->addChild(prevalence, "prevalence");
     domain->addChild("private_registration");
-    domain->addChild("registrant");
+    domain->addChild(user, "registrant");
     domain->addChild("registrar");
     domain->addChild("registry_data_raw_text");
     domain->addChild("status");
     domain->addChild("tags");
-    domain->addChild("tech");
+    domain->addChild(user, "tech");
     domain->addChild("update_time");
     domain->addChild("whois_record_raw_text");
     domain->addChild("whois_server");
     domain->addChild("whois_time");
-    domain->addChild("zone");
+    domain->addChild(user, "zone");
 
-    std::shared_ptr<CompletionItem> noun = std::make_shared<CompletionItem>();
+    std::shared_ptr<CompletionItem> pdfInfo = std::make_shared<CompletionItem>();
+    pdfInfo->addChild("acroform");
+    pdfInfo->addChild("autoaction");
+    pdfInfo->addChild("embedded_file");
+    pdfInfo->addChild("encrypted");
+    pdfInfo->addChild("endobj_count");
+    pdfInfo->addChild("endstream_count");
+    pdfInfo->addChild("flash");
+    pdfInfo->addChild("header");
+    pdfInfo->addChild("javascript");
+    pdfInfo->addChild("jbig2_compression");
+    pdfInfo->addChild("js");
+    pdfInfo->addChild("launch_action_count");
+    pdfInfo->addChild("obj_count");
+    pdfInfo->addChild("object_stream_count");
+    pdfInfo->addChild("openaction");
+    pdfInfo->addChild("page_count");
+    pdfInfo->addChild("startxref");
+    pdfInfo->addChild("stream_count");
+    pdfInfo->addChild("suspicious_colors");
+    pdfInfo->addChild("trailer");
+    pdfInfo->addChild("xfa");
+    pdfInfo->addChild("xref");
+
+    std::shared_ptr<CompletionItem> signerInfo = std::make_shared<CompletionItem>();
+    signerInfo->addChild("cert_issuer");
+    signerInfo->addChild("name");
+    signerInfo->addChild("status");
+    signerInfo->addChild("valid_usage");
+
+    std::shared_ptr<CompletionItem> x509 = std::make_shared<CompletionItem>();
+    x509->addChild("algorithm");
+    x509->addChild("cert_issuer");
+    x509->addChild("name");
+    x509->addChild("serial_number");
+    x509->addChild("thumbprint");
+
+    std::shared_ptr<CompletionItem> fileMetadataSignatureInfo = std::make_shared<CompletionItem>();
+    fileMetadataSignatureInfo->addChild("signer");
+    fileMetadataSignatureInfo->addChild(signerInfo, "signers");
+    fileMetadataSignatureInfo->addChild("verification_message");
+    fileMetadataSignatureInfo->addChild("verified");
+    fileMetadataSignatureInfo->addChild(x509, "x509");
+
+    std::shared_ptr<CompletionItem> fileMetadataPE = std::make_shared<CompletionItem>();
+    fileMetadataPE->addChild("compilation_exiftool_time");
+    fileMetadataPE->addChild("compilation_time");
+    fileMetadataPE->addChild("entry_point");
+    fileMetadataPE->addChild("entry_point_exiftool");
+    fileMetadataPE->addChild("imphash");
+    fileMetadataPE->addChild("imports");
+    fileMetadataPE->addChild("resource");
+    fileMetadataPE->addChild("resources_language_count");
+    fileMetadataPE->addChild(label, "resources_language_count_str");
+    fileMetadataPE->addChild("resources_type_count");
+    fileMetadataPE->addChild(label, "resources_type_count_str");
+    fileMetadataPE->addChild("section");
+    fileMetadataPE->addChild(signerInfo, "signature_info");
+
+    std::shared_ptr<CompletionItem> analyticsMetadata = std::make_shared<CompletionItem>();
+    analyticsMetadata->addChild("analytic");
+
+    std::shared_ptr<CompletionItem> securityResult_associationAlias = std::make_shared<CompletionItem>();
+    securityResult_associationAlias->addChild("company");
+    securityResult_associationAlias->addChild("name");
+
+    std::shared_ptr<CompletionItem> securityResult_association = std::make_shared<CompletionItem>();
+    securityResult_association->addChild(securityResult_associationAlias, "alias");
+    securityResult_association->addChild(securityResult_association, "associated_actors");
+    securityResult_association->addChild("country_code");
+    securityResult_association->addChild("description");
+    securityResult_association->addChild("first_reference_time");
+    securityResult_association->addChild("id");
+    securityResult_association->addChild("industries_affected");
+    securityResult_association->addChild("last_reference_time");
+    securityResult_association->addChild("name");
+    securityResult_association->addChild(location, "region_code");
+    securityResult_association->addChild("role");
+    securityResult_association->addChild("source_country");
+    securityResult_association->addChild(location, "sponsor_region");
+    securityResult_association->addChild("tags");
+    securityResult_association->addChild(location, "targeted_regions");
+    securityResult_association->addChild("type");
+
+    std::shared_ptr<CompletionItem> attackDetails_tactic = std::make_shared<CompletionItem>();
+    attackDetails_tactic->addChild("id");
+    attackDetails_tactic->addChild("name");
+
+    std::shared_ptr<CompletionItem> attackDetails_technique = std::make_shared<CompletionItem>();
+    attackDetails_technique->addChild("id");
+    attackDetails_technique->addChild("name");
+    attackDetails_technique->addChild("subtechnique_id");
+    attackDetails_technique->addChild("subtechnique_name");
+
+    std::shared_ptr<CompletionItem> attackDetails = std::make_shared<CompletionItem>();
+    attackDetails->addChild(attackDetails_tactic, "tactics");
+    attackDetails->addChild(attackDetails_technique, "techniques");
+    attackDetails->addChild("version");
+
+    std::shared_ptr<CompletionItem> securityResult_IoCStats = std::make_shared<CompletionItem>();
+    securityResult_IoCStats->addChild("benign_count");
+    securityResult_IoCStats->addChild("first_level_source");
+    securityResult_IoCStats->addChild("ioc_stats_type");
+    securityResult_IoCStats->addChild("malicious_count");
+    securityResult_IoCStats->addChild("quality");
+    securityResult_IoCStats->addChild("response_count");
+    securityResult_IoCStats->addChild("second_level_source");
+    securityResult_IoCStats->addChild("source_count");
+
+    std::shared_ptr<CompletionItem> securityResult_verdictInfo = std::make_shared<CompletionItem>();
+    securityResult_verdictInfo->addChild("benign_count");
+    securityResult_verdictInfo->addChild("category_details");
+    securityResult_verdictInfo->addChild("confidence_score");
+    securityResult_verdictInfo->addChild("global_customer_count");
+    securityResult_verdictInfo->addChild("global_hits_count");
+    securityResult_verdictInfo->addChild(securityResult_IoCStats, "ioc_stats");
+    securityResult_verdictInfo->addChild("malicious_count");
+    securityResult_verdictInfo->addChild("neighbour_influence");
+    securityResult_verdictInfo->addChild("pwn");
+    securityResult_verdictInfo->addChild("pwn_first_tagged_time");
+    securityResult_verdictInfo->addChild("response_count");
+    securityResult_verdictInfo->addChild("source_count");
+    securityResult_verdictInfo->addChild("source_provider");
+    securityResult_verdictInfo->addChild("verdict_response");
+    securityResult_verdictInfo->addChild("verdict_time");
+    securityResult_verdictInfo->addChild("verdict_type");
+
+    std::shared_ptr<CompletionItem> securityResult = std::make_shared<CompletionItem>();
+    securityResult->addChild(noun, "about");
+    securityResult->addChild("action");
+    securityResult->addChild("action_details");
+    securityResult->addChild("alert_state");
+    securityResult->addChild(analyticsMetadata, "analytics_metadata");
+    securityResult->addChild(securityResult_association, "associations");
+    securityResult->addChild(attackDetails, "attack_details");
+    securityResult->addChild("campaigns");
+    securityResult->addChild("category");
+    securityResult->addChild("category_details");
+    securityResult->addChild("confidence");
+    securityResult->addChild("confidence_details");
+    securityResult->addChild("confidence_score");
+    securityResult->addChild("description");
+    securityResult->addChild(label, "detection_fields");
+    securityResult->addChild("first_discovered_time");
+    securityResult->addChild("last_discovered_time");
+    securityResult->addChild("last_updated_time");
+    securityResult->addChild(label, "outcomes");
+    securityResult->addChild("priority");
+    securityResult->addChild("priority_details");
+    securityResult->addChild("risk_score");
+    securityResult->addChild("rule_author");
+    securityResult->addChild("rule_id");
+    securityResult->addChild(label, "rule_labels");
+    securityResult->addChild("rule_name");
+    securityResult->addChild("rule_set");
+    securityResult->addChild("rule_set_display_name");
+    securityResult->addChild("rule_type");
+    securityResult->addChild("rule_version");
+    securityResult->addChild("ruleset_category_display_name");
+    securityResult->addChild("severity");
+    securityResult->addChild("severity_details");
+    securityResult->addChild("summary");
+    securityResult->addChild("threat_feed_name");
+    securityResult->addChild("threat_id");
+    securityResult->addChild("threat_id_namespace");
+    securityResult->addChild("threat_name");
+    securityResult->addChild("threat_status");
+    securityResult->addChild("threat_verdict");
+    securityResult->addChild("url_back_to_product");
+    securityResult->addChild("verdict");
+    securityResult->addChild(securityResult_verdictInfo, "verdict_info");
+
+    std::shared_ptr<CompletionItem> fileMetadataCodesign = std::make_shared<CompletionItem>();
+    fileMetadataCodesign->addChild("compilation_time");
+    fileMetadataCodesign->addChild("format");
+    fileMetadataCodesign->addChild("id");
+
+    std::shared_ptr<CompletionItem> signatureInfo = std::make_shared<CompletionItem>();
+    signatureInfo->addChild(fileMetadataCodesign, "codesign");
+    signatureInfo->addChild(fileMetadataSignatureInfo, "sigcheck");
+
+    std::shared_ptr<CompletionItem> file = std::make_shared<CompletionItem>();
+    file->addChild("ahash");
+    file->addChild("authentihash");
+    file->addChild("capabilities_tags");
+    file->addChild("embedded_domains");
+    file->addChild("embedded_ips");
+    file->addChild("embedded_urls");
+    file->addChild("exif_info");
+    file->addChild("file_metadata");
+    file->addChild("file_type");
+    file->addChild("first_seen_time");
+    file->addChild("first_submission_time");
+    file->addChild("full_path");
+    file->addChild("last_analysis_time");
+    file->addChild("last_modification_time");
+    file->addChild("last_seen_time");
+    file->addChild("last_submission_time");
+    file->addChild(favicon, "main_icon");
+    file->addChild("md5");
+    file->addChild("mime_type");
+    file->addChild("names");
+    file->addChild(pdfInfo, "pdf_info");
+    file->addChild(fileMetadataPE, "pe_file");
+    file->addChild(prevalence, "prevalence");
+    file->addChild(securityResult, "security_result");
+    file->addChild("sha1");
+    file->addChild("sha256");
+    file->addChild(signatureInfo, "signature_info");
+    file->addChild("size");
+    file->addChild("ssdeep");
+    file->addChild("stat_dev");
+    file->addChild("stat_flags");
+    file->addChild("stat_inode");
+    file->addChild("stat_mode");
+    file->addChild("stat_nlink");
+    file->addChild("tags");
+    file->addChild("vhash");
+
+    std::shared_ptr<CompletionItem> group = std::make_shared<CompletionItem>();
+    group->addChild(attribute, "attribute");
+    group->addChild("creation_time");
+    group->addChild("email_addresses");
+    group->addChild("group_display_name");
+    group->addChild("product_object_id");
+    group->addChild("windows_sid");
+
+    std::shared_ptr<CompletionItem> securityResult_analystVerdict = std::make_shared<CompletionItem>();
+    securityResult_analystVerdict->addChild("confidence_score");
+    securityResult_analystVerdict->addChild("verdict_response");
+    securityResult_analystVerdict->addChild("verdict_time");
+
+    std::shared_ptr<CompletionItem> securityResult_source = std::make_shared<CompletionItem>();
+    securityResult_source->addChild("benign_count");
+    securityResult_source->addChild("malicious_count");
+    securityResult_source->addChild("name");
+    securityResult_source->addChild("quality");
+    securityResult_source->addChild("response_count");
+    securityResult_source->addChild("source_count");
+    securityResult_source->addChild(securityResult_source, "threat_intelligence_sources");
+
+    std::shared_ptr<CompletionItem> securityResult_providerMLVerdict = std::make_shared<CompletionItem>();
+    securityResult_providerMLVerdict->addChild("benign_count");
+    securityResult_providerMLVerdict->addChild("confidence_score");
+    securityResult_providerMLVerdict->addChild("malicious_count");
+    securityResult_providerMLVerdict->addChild(securityResult_source, "mandiant_sources");
+    securityResult_providerMLVerdict->addChild("source_provider");
+    securityResult_providerMLVerdict->addChild(securityResult_source, "third_party_sources");
+
+    std::shared_ptr<CompletionItem> securityResult_verdict = std::make_shared<CompletionItem>();
+    securityResult_verdict->addChild(securityResult_analystVerdict, "analyst_verdict");
+    securityResult_verdict->addChild("neighbour_influence");
+    securityResult_verdict->addChild("response_count");
+    securityResult_verdict->addChild("source_count");
+    securityResult_verdict->addChild(securityResult_providerMLVerdict, "verdict");
+
+    std::shared_ptr<CompletionItem> investigation = std::make_shared<CompletionItem>();
+    investigation->addChild("comments");
+    investigation->addChild("priority");
+    investigation->addChild("reason");
+    investigation->addChild("reputation");
+    investigation->addChild("risk_score");
+    investigation->addChild("root_cause");
+    investigation->addChild("severity_score");
+    investigation->addChild("status");
+    investigation->addChild(securityResult_verdict, "verdict");
+
+    std::shared_ptr<CompletionItem> process = std::make_shared<CompletionItem>();
+    process->addChild("access_mask");
+    process->addChild("command_line");
+    process->addChild("command_line_history");
+    process->addChild(file, "file");
+    process->addChild("integrity_level_rid");
+    process->addChild("parent_pid");
+    process->addChild(process, "parent_process");
+    process->addChild("pid");
+    process->addChild("product_specific_parent_process_id");
+    process->addChild("product_specific_process_id");
+    process->addChild("token_elevation_type");
+
+    std::shared_ptr<CompletionItem> registry = std::make_shared<CompletionItem>();
+    registry->addChild("registry_key");
+    registry->addChild("registry_value_data");
+    registry->addChild("registry_value_name");
+
+    std::shared_ptr<CompletionItem> tracker = std::make_shared<CompletionItem>();
+    tracker->addChild("id");
+    tracker->addChild("timestamp");
+    tracker->addChild("tracker");
+    tracker->addChild("url");
+
+    std::shared_ptr<CompletionItem> url = std::make_shared<CompletionItem>();
+    url->addChild("categories");
+    url->addChild(favicon, "favicon");
+    url->addChild(protobufStruct, "html_meta");
+    url->addChild("last_final_url");
+    url->addChild("last_http_response_code");
+    url->addChild("last_http_response_content_length");
+    url->addChild("last_http_response_content_sha256");
+    url->addChild(protobufStruct, "last_http_response_cookies");
+    url->addChild(protobufStruct, "last_http_response_headers");
+    url->addChild("tags");
+    url->addChild("title");
+    url->addChild(tracker, "trackers");
+    url->addChild("url");
+
+    // Definition is above
+    // std::shared_ptr<CompletionItem> noun = std::make_shared<CompletionItem>();
     noun->addChild("administrative_domain");
     noun->addChild("application");
     noun->addChild(artifact, "artifact");
     noun->addChild(asset, "asset");
     noun->addChild("asset_id");
     noun->addChild(cloud, "cloud");
-    noun->addChild("domain");
+    noun->addChild(domain, "domain");
     noun->addChild("email");
-    noun->addChild("file");
-    noun->addChild("group");
+    noun->addChild(file, "file");
+    noun->addChild(group, "group");
     noun->addChild("hostname");
-    noun->addChild("investigation");
+    noun->addChild(investigation, "investigation");
     noun->addChild("ip");
-    noun->addChild("ip_geo_artifact");
-    noun->addChild("ip_location");
-    noun->addChild("labels");
-    noun->addChild("location");
+    noun->addChild(artifact, "ip_geo_artifact");
+    noun->addChild(location, "ip_location");
+    noun->addChild(label, "labels");
+    noun->addChild(location, "location");
     noun->addChild("mac");
     noun->addChild("namespace");
     noun->addChild("nat_ip");
     noun->addChild("nat_port");
-    noun->addChild("network");
+    noun->addChild(network, "network");
     noun->addChild("object_reference");
     noun->addChild("platform");
     noun->addChild("platform_patch_level");
     noun->addChild("platform_version");
     noun->addChild("port");
-    noun->addChild("process");
-    noun->addChild("process_ancestors");
-    noun->addChild("registry");
-    noun->addChild("resource");
-    noun->addChild("resource_ancestors");
-    noun->addChild("security_result");
+    noun->addChild(process, "process");
+    noun->addChild(process, "process_ancestors");
+    noun->addChild(registry, "registry");
+    noun->addChild(resource, "resource");
+    noun->addChild(resource, "resource_ancestors");
+    noun->addChild(securityResult, "security_result");
     noun->addChild("url");
-    noun->addChild("url_metadata");
-    noun->addChild("user");
-    noun->addChild("user_management_chain");
+    noun->addChild(url, "url_metadata");
+    noun->addChild(user, "user");
+    noun->addChild(user, "user_management_chain");
+
+    std::shared_ptr<CompletionItem> authentication = std::make_shared<CompletionItem>();
+    authentication->addChild("auth_details");
+    authentication->addChild("mechanism");
+    authentication->addChild("type");
+
+    std::shared_ptr<CompletionItem> vulnerabilities = std::make_shared<CompletionItem>();
+    vulnerabilities->addChild(vulnerability, "vulnerabilities");
+
+    std::shared_ptr<CompletionItem> extensions = std::make_shared<CompletionItem>();
+    extensions->addChild(authentication, "auth");
+    extensions->addChild(vulnerabilities, "vulns");
+
+    std::shared_ptr<CompletionItem> tags = std::make_shared<CompletionItem>();
+    tags->addChild("data_tap_config_name");
+    tags->addChild("tenant_id");
+    
+    std::shared_ptr<CompletionItem> metadata = std::make_shared<CompletionItem>();
+    metadata->addChild("base_labels");
+    metadata->addChild("collected_timestamp");
+    metadata->addChild("description");
+    metadata->addChild("enrichment_labels");
+    metadata->addChild("enrichment_state");
+    metadata->addChild("event_timestamp");
+    metadata->addChild("event_type");
+    metadata->addChild("id");
+    metadata->addChild("ingested_timestamp");
+    metadata->addChild(label, "ingestion_labels");
+    metadata->addChild("log_type");
+    metadata->addChild("product_deployment_id");
+    metadata->addChild("product_event_type");
+    metadata->addChild("product_log_id");
+    metadata->addChild("product_name");
+    metadata->addChild("product_version");
+    metadata->addChild(tags, "tags");
+    metadata->addChild("url_back_to_product");
+    metadata->addChild("vendor_name");
 
     root->addChild(noun, "about");
+    root->addChild(protobufStruct, "additional");
+    root->addChild(extensions, "extensions");
     root->addChild(noun, "intermediary");
+    root->addChild(metadata, "metadata");
+    root->addChild(network, "network");
     root->addChild(noun, "observer");
     root->addChild(noun, "principal");
+    root->addChild(securityResult, "security_result");
     root->addChild(noun, "src");
     root->addChild(noun, "target");
 }
