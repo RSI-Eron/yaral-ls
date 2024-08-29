@@ -25,5 +25,11 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Meta.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/Meta.h
 )
+
 target_include_directories(yaral-ls PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_options(yaral-ls PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+option(SHOW_TYPES "Show type in completion results" OFF)
+if(SHOW_TYPES) # cmake -DSHOW_TYPES=ON ../src
+    add_definitions(-DSHOW_TYPES)
+endif()

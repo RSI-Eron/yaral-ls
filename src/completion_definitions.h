@@ -85,7 +85,7 @@ public: // Getters
     const std::optional<json> getData() const;
 
 public:
-    CompletionItemProperties(std::string label, std::string type,  bool repeated = false, bool deprecated = false, completionItemKind kind = completionItemKind::Field)
+    CompletionItemProperties(std::string label, std::string type __attribute__((unused)),  bool repeated = false, bool deprecated = false, completionItemKind kind = completionItemKind::Field)
         : label(std::move(label)) {
         if (repeated)
             detail = "repeated";
@@ -99,9 +99,14 @@ public:
             tags = v;
         }
 
+
+        #ifdef SHOW_TYPES
         // Show type;
-        if (type != "")
+        if (type != "") {
+            std::replace(type.begin(), type.end(), '_', '.');
             labelDetails = json{{"description", type}};
+        }
+        #endif
 
         this->kind = kind;
     }

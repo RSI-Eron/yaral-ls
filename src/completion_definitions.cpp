@@ -110,7 +110,7 @@ void CompletionItem::initialize_tree() {
     dhcp->addChild("htype", "uint32");
     dhcp->addChild("lease_time_seconds", "uint32");
     dhcp->addChild(CompletionItemProperties("opcode", "Dhcp.OpCode", completionItemKind::Enum));
-    dhcp->addChild(dhcp_option, "options", VAR_NAME(dhcp_option));
+    dhcp->addChild(dhcp_option, CompletionItemProperties("options", VAR_NAME(dhcp_option), true, false, completionItemKind::Method));
     dhcp->addChild("requested_address");
     dhcp->addChild("seconds", "uint32");
     dhcp->addChild("siaddr");
@@ -141,13 +141,13 @@ void CompletionItem::initialize_tree() {
     dns_Question->addChild("type", "uint32");
 
     std::shared_ptr<CompletionItem> dns = std::make_shared<CompletionItem>();
-    dns->addChild(dns_ResourceRecord, "additional", VAR_NAME(dns_ResourceRecord));
-    dns->addChild(dns_ResourceRecord, "answers", VAR_NAME(dns_ResourceRecord));
+    dns->addChild(dns_ResourceRecord, CompletionItemProperties("additional", VAR_NAME(dns_ResourceRecord), true, false, completionItemKind::Method));
+    dns->addChild(dns_ResourceRecord, CompletionItemProperties("answers", VAR_NAME(dns_ResourceRecord), true, false, completionItemKind::Method));
     dns->addChild("authoritative", "bool");
-    dns->addChild(dns_ResourceRecord, "authority", VAR_NAME(dns_ResourceRecord));
+    dns->addChild(dns_ResourceRecord, CompletionItemProperties("authority", VAR_NAME(dns_ResourceRecord), true, false, completionItemKind::Method));
     dns->addChild("id", "uint32");
     dns->addChild("opcode", "uint32");
-    dns->addChild(dns_Question, "questions", VAR_NAME(dns_Question));
+    dns->addChild(dns_Question, CompletionItemProperties("questions", VAR_NAME(dns_Question), true, false, completionItemKind::Method));
     dns->addChild("recursion_available", "bool");
     dns->addChild("recursion_desired", "bool");
     dns->addChild("response", "bool");
@@ -155,14 +155,14 @@ void CompletionItem::initialize_tree() {
     dns->addChild("truncated", "bool");
 
     std::shared_ptr<CompletionItem> email = std::make_shared<CompletionItem>();
-    email->addChild("bcc");
+    email->addChild(CompletionItemProperties("bcc", "string", true, false));
     email->addChild("bounce_address");
-    email->addChild("cc");
+    email->addChild(CompletionItemProperties("cc", "string", true, false));
     email->addChild("from");
     email->addChild("mail_id");
     email->addChild("reply_to");
-    email->addChild("subject");
-    email->addChild("to");
+    email->addChild(CompletionItemProperties("subject", "string", true, false));
+    email->addChild(CompletionItemProperties("to", "string", true, false));
 
     std::shared_ptr<CompletionItem> ftp = std::make_shared<CompletionItem>();
     ftp->addChild("command");
@@ -193,7 +193,7 @@ void CompletionItem::initialize_tree() {
     tls_client->addChild(certificate, "certificate", VAR_NAME(certificate));
     tls_client->addChild("ja3");
     tls_client->addChild("server_name");
-    tls_client->addChild("supported_ciphers");
+    tls_client->addChild(CompletionItemProperties("supported_ciphers", "string", true, false));
 
     std::shared_ptr<CompletionItem> tls = std::make_shared<CompletionItem>();
     tls->addChild("cipher");
@@ -212,8 +212,8 @@ void CompletionItem::initialize_tree() {
     Smtp->addChild("is_webmail", "bool");
     Smtp->addChild("mail_from");
     Smtp->addChild("message_path");
-    Smtp->addChild("rcpt_to");
-    Smtp->addChild("server_response");
+    Smtp->addChild(CompletionItemProperties("rcpt_to", "string", true, false));
+    Smtp->addChild(CompletionItemProperties("server_response", "string", true, false));
 
     std::shared_ptr<CompletionItem> network = std::make_shared<CompletionItem>();
     network->addChild(CompletionItemProperties("application_protocol", "Network.ApplicationProtocol", completionItemKind::Enum));
@@ -254,7 +254,7 @@ void CompletionItem::initialize_tree() {
     artifact->addChild(network, "network", VAR_NAME(network));
     artifact->addChild(prevalence, "prevalence", VAR_NAME(prevalence));
     artifact->addChild("regional_internet_registry");
-    artifact->addChild("tags");
+    artifact->addChild(CompletionItemProperties("tags", "string", true, false));
     artifact->addChild("whois");
     artifact->addChild("whois_date", "protobuf.Timestamp");
 
@@ -283,10 +283,10 @@ void CompletionItem::initialize_tree() {
     std::shared_ptr<CompletionItem> attribute = std::make_shared<CompletionItem>();
     attribute->addChild(cloud, "cloud", VAR_NAME(cloud));
     attribute->addChild("creation_time", "protobuf.Timestamp");
-    attribute->addChild(label, "labels", VAR_NAME(label));
+    attribute->addChild(label, CompletionItemProperties("labels", VAR_NAME(label), true, false));
     attribute->addChild("last_update_time", "protobuf.Timestamp");
-    attribute->addChild(permission, "permissions", VAR_NAME(permission));
-    attribute->addChild(role, "roles", VAR_NAME(role));
+    attribute->addChild(permission, CompletionItemProperties("permissions", VAR_NAME(permission), true, false, completionItemKind::Method));
+    attribute->addChild(role, CompletionItemProperties("roles", VAR_NAME(role), true, false, completionItemKind::Method));
 
     // Definition is above
     //std::shared_ptr<CompletionItem> resource = std::make_shared<CompletionItem>();
@@ -318,7 +318,7 @@ void CompletionItem::initialize_tree() {
     std::shared_ptr<CompletionItem> software = std::make_shared<CompletionItem>();
     software->addChild("description");
     software->addChild("name");
-    software->addChild(permission, "permissions", VAR_NAME(permission));
+    software->addChild(permission, CompletionItemProperties("permissions", VAR_NAME(permission), true, false, completionItemKind::Method));
     software->addChild("vendor_name");
     software->addChild("version");
 
@@ -349,22 +349,22 @@ void CompletionItem::initialize_tree() {
     asset->addChild(CompletionItemProperties("deployment_status", "Asset.DeploymentStatus", completionItemKind::Enum));
     asset->addChild("first_discover_time", "protobuf.Timestamp");
     asset->addChild("first_seen_time", "protobuf.Timestamp");
-    asset->addChild(hardware, "hardware", VAR_NAME(hardware));
+    asset->addChild(hardware, CompletionItemProperties("hardware", VAR_NAME(hardware), true, false, completionItemKind::Method));
     asset->addChild("hostname");
-    asset->addChild("ip");
-    asset->addChild(label, "labels", VAR_NAME(label));
+    asset->addChild(CompletionItemProperties("ip", "string", true, false));
+    asset->addChild(label, CompletionItemProperties("labels", VAR_NAME(label), true, false));
     asset->addChild("last_boot_time", "protobuf.Timestamp");
     asset->addChild("last_discover_time", "protobuf.Timestamp");
     asset->addChild(location, "location", VAR_NAME(location));
-    asset->addChild("mac");
-    asset->addChild("nat_ip");
+    asset->addChild(CompletionItemProperties("mac", "string", true, false));
+    asset->addChild(CompletionItemProperties("nat_ip", "string", true, false));
     asset->addChild("network_domain");
     asset->addChild(platformSoftware, "platform_software", VAR_NAME(platformSoftware));
     asset->addChild("product_object_id");
-    asset->addChild(software, "software", VAR_NAME(software));
+    asset->addChild(software, CompletionItemProperties("software", VAR_NAME(software), true, false, completionItemKind::Method));
     asset->addChild("system_last_update_time", "protobuf.Timestamp");
     asset->addChild(CompletionItemProperties("type", "Asset.AssetType", completionItemKind::Enum));
-    asset->addChild(vulnerability, "vulnerabilities", VAR_NAME(vulnerability));
+    asset->addChild(vulnerability, CompletionItemProperties("vulnerabilities", VAR_NAME(vulnerability), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> timeOff = std::make_shared<CompletionItem>();
     timeOff->addChild("description");
@@ -376,29 +376,29 @@ void CompletionItem::initialize_tree() {
     user->addChild(CompletionItemProperties("account_type", "User.AccountType", completionItemKind::Enum));
     user->addChild(attribute, "attribute", VAR_NAME(attribute));
     user->addChild("company_name");
-    user->addChild("department");
-    user->addChild("email_addresses");
+    user->addChild(CompletionItemProperties("department", "string", true, false));
+    user->addChild(CompletionItemProperties("email_addresses", "string", true, false));
     user->addChild("employee_id");
     user->addChild("first_name");
     user->addChild("first_seen_time", "protobuf.Timestamp");
-    user->addChild("group_identifiers");
+    user->addChild(CompletionItemProperties("group_identifiers", "string", true, false));
     user->addChild("groupid");
     user->addChild("hire_date", "protobuf.Timestamp");
     user->addChild("last_bad_password_attempt_time", "protobuf.Timestamp");
     user->addChild("last_login_time", "protobuf.Timestamp");
     user->addChild("last_name");
     user->addChild("last_password_change_time", "protobuf.Timestamp");
-    user->addChild(user, "managers", VAR_NAME(user));
+    user->addChild(user, CompletionItemProperties("managers", VAR_NAME(user), true, false, completionItemKind::Method));
     user->addChild("middle_name");
     user->addChild(location, "office_address", VAR_NAME(location));
     user->addChild("password_expiration_time", "protobuf.Timestamp");
     user->addChild(location, "personal_address", VAR_NAME(location));
-    user->addChild("phone_numbers");
+    user->addChild(CompletionItemProperties("phone_numbers", "string", true, false));
     user->addChild("product_object_id");
     user->addChild("role_description");
     user->addChild("role_name");
     user->addChild("termination_date", "protobuf.Timestamp");
-    user->addChild(timeOff, "time_off", VAR_NAME(timeOff));
+    user->addChild(timeOff, CompletionItemProperties("time_off", VAR_NAME(timeOff), true, false, completionItemKind::Method));
     user->addChild("title");
     user->addChild(CompletionItemProperties("user_authentication_status", "Authentication.AuthenticationStatus", completionItemKind::Enum));
     user->addChild("user_display_name");
@@ -431,7 +431,7 @@ void CompletionItem::initialize_tree() {
     domain->addChild(user, "admin", VAR_NAME(user));
     domain->addChild("audit_update_time", "protobuf.Timestamp");
     domain->addChild(user, "billing", VAR_NAME(user));
-    domain->addChild("categories");
+    domain->addChild(CompletionItemProperties("categories", "string", true, false));
     domain->addChild("contact_email");
     domain->addChild("creation_time", "protobuf.Timestamp");
     domain->addChild("expiration_time", "protobuf.Timestamp");
@@ -439,21 +439,21 @@ void CompletionItem::initialize_tree() {
     domain->addChild("first_seen_time", "protobuf.Timestamp");
     domain->addChild("iana_registrar_id", "int64");
     domain->addChild("jarm");
-    domain->addChild(dnsRecord, "last_dns_records", VAR_NAME(dnsRecord));
+    domain->addChild(dnsRecord, CompletionItemProperties("last_dns_records", VAR_NAME(dnsRecord), true, false, completionItemKind::Method));
     domain->addChild("last_dns_records_time", "protobuf.Timestamp");
     domain->addChild(SSLCertificate, "last_https_certificate", VAR_NAME(SSLCertificate));
     domain->addChild("last_https_certificate_time", "protobuf.Timestamp");
     domain->addChild("last_seen_time", "protobuf.Timestamp");
     domain->addChild("name");
-    domain->addChild("name_server");
-    domain->addChild(popularityRank, "popularity_ranks", VAR_NAME(popularityRank));
+    domain->addChild(CompletionItemProperties("name_server", "string", true, false));
+    domain->addChild(popularityRank, CompletionItemProperties("popularity_ranks", VAR_NAME(popularityRank), true, false, completionItemKind::Method));
     domain->addChild(prevalence, "prevalence", VAR_NAME(prevalence));
     domain->addChild("private_registration", "bool");
     domain->addChild(user, "registrant", VAR_NAME(user));
     domain->addChild("registrar");
     domain->addChild("registry_data_raw_text", "bytes");
     domain->addChild("status");
-    domain->addChild("tags");
+    domain->addChild(CompletionItemProperties("tags", "string", true, false));
     domain->addChild(user, "tech", VAR_NAME(user));
     domain->addChild("update_time", "protobuf.Timestamp");
     domain->addChild("whois_record_raw_text", "bytes");
@@ -499,11 +499,11 @@ void CompletionItem::initialize_tree() {
     x509->addChild("thumbprint");
 
     std::shared_ptr<CompletionItem> fileMetadataSignatureInfo = std::make_shared<CompletionItem>();
-    fileMetadataSignatureInfo->addChild("signer");
-    fileMetadataSignatureInfo->addChild(signerInfo, "signers", VAR_NAME(signerInfo));
+    fileMetadataSignatureInfo->addChild(CompletionItemProperties("signer", "string", true, false));
+    fileMetadataSignatureInfo->addChild(signerInfo, CompletionItemProperties("signers", VAR_NAME(signerInfo), true, false, completionItemKind::Method));
     fileMetadataSignatureInfo->addChild("verification_message");
     fileMetadataSignatureInfo->addChild("verified", "bool");
-    fileMetadataSignatureInfo->addChild(x509, "x509", VAR_NAME(x509));
+    fileMetadataSignatureInfo->addChild(x509, CompletionItemProperties("x509", VAR_NAME(x509), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> fileMetadataPE = std::make_shared<CompletionItem>();
     fileMetadataPE->addChild("compilation_exiftool_time", "protobuf.Timestamp");
@@ -511,13 +511,13 @@ void CompletionItem::initialize_tree() {
     fileMetadataPE->addChild("entry_point", "int64");
     fileMetadataPE->addChild("entry_point_exiftool", "int64");
     fileMetadataPE->addChild("imphash");
-    fileMetadataPE->addChild("imports", "FileMetadataImports");
-    fileMetadataPE->addChild("resource", "FileMetadataPeResourceInfo");
-    fileMetadataPE->addChild("resources_language_count", "StringToInt64MapEntry");
-    fileMetadataPE->addChild(label, "resources_language_count_str", VAR_NAME(label));
-    fileMetadataPE->addChild("resources_type_count", "StringToInt64MapEntry");
-    fileMetadataPE->addChild(label, "resources_type_count_str", VAR_NAME(label));
-    fileMetadataPE->addChild("section", "FileMetadataSection");
+    fileMetadataPE->addChild(CompletionItemProperties("imports", "FileMetadataImports", true, false));
+    fileMetadataPE->addChild(CompletionItemProperties("resource", "FileMetadataPeResourceInfo", true, false));
+    fileMetadataPE->addChild(CompletionItemProperties("resources_language_count", "StringToInt64MapEntry", true, false));
+    fileMetadataPE->addChild(label, CompletionItemProperties("resources_language_count_str", VAR_NAME(label), true, false, completionItemKind::Method));
+    fileMetadataPE->addChild(CompletionItemProperties("resources_type_count", "StringToInt64MapEntry", true, false));
+    fileMetadataPE->addChild(label, CompletionItemProperties("resources_type_count_str", VAR_NAME(label), true, false, completionItemKind::Method));
+    fileMetadataPE->addChild(CompletionItemProperties("section", "FileMetadataSection", true, false));
     fileMetadataPE->addChild(signerInfo, "signature_info", VAR_NAME(signerInfo));
 
     std::shared_ptr<CompletionItem> analyticsMetadata = std::make_shared<CompletionItem>();
@@ -528,21 +528,21 @@ void CompletionItem::initialize_tree() {
     securityResult_associationAlias->addChild("name");
 
     std::shared_ptr<CompletionItem> securityResult_association = std::make_shared<CompletionItem>();
-    securityResult_association->addChild(securityResult_associationAlias, "alias", VAR_NAME(securityResult_associationAlias));
-    securityResult_association->addChild(securityResult_association, "associated_actors", VAR_NAME(securityResult_association));
-    securityResult_association->addChild("country_code");
+    securityResult_association->addChild(securityResult_associationAlias, CompletionItemProperties("alias", VAR_NAME(securityResult_associationAlias), true, false, completionItemKind::Method));
+    securityResult_association->addChild(securityResult_association, CompletionItemProperties("associated_actors", VAR_NAME(securityResult_association), true, false, completionItemKind::Method));
+    securityResult_association->addChild(CompletionItemProperties("country_code", "string", true, false));
     securityResult_association->addChild("description");
     securityResult_association->addChild("first_reference_time", "protobuf.Timestamp");
     securityResult_association->addChild("id");
-    securityResult_association->addChild("industries_affected");
+    securityResult_association->addChild(CompletionItemProperties("industries_affected", "string", true, false));
     securityResult_association->addChild("last_reference_time", "protobuf.Timestamp");
     securityResult_association->addChild("name");
     securityResult_association->addChild(location, "region_code", VAR_NAME(location));
     securityResult_association->addChild("role");
     securityResult_association->addChild("source_country");
     securityResult_association->addChild(location, "sponsor_region", VAR_NAME(location));
-    securityResult_association->addChild("tags");
-    securityResult_association->addChild(location, "targeted_regions", VAR_NAME(location));
+    securityResult_association->addChild(CompletionItemProperties("tags", "string", true, false));
+    securityResult_association->addChild(location, CompletionItemProperties("targeted_regions", VAR_NAME(location), true, false, completionItemKind::Method));
     securityResult_association->addChild(CompletionItemProperties("type", "SecurityResult.Association.AssociationType", completionItemKind::Enum));
 
     std::shared_ptr<CompletionItem> attackDetails_tactic = std::make_shared<CompletionItem>();
@@ -556,8 +556,8 @@ void CompletionItem::initialize_tree() {
     attackDetails_technique->addChild("subtechnique_name");
 
     std::shared_ptr<CompletionItem> attackDetails = std::make_shared<CompletionItem>();
-    attackDetails->addChild(attackDetails_tactic, "tactics", VAR_NAME(attackDetails_tactic));
-    attackDetails->addChild(attackDetails_technique, "techniques", VAR_NAME(attackDetails_technique));
+    attackDetails->addChild(attackDetails_tactic, CompletionItemProperties("tactics", VAR_NAME(attackDetails_tactic), true, false, completionItemKind::Method));
+    attackDetails->addChild(attackDetails_technique, CompletionItemProperties("techniques", VAR_NAME(attackDetails_technique), true, false, completionItemKind::Method));
     attackDetails->addChild("version");
 
     std::shared_ptr<CompletionItem> securityResult_IoCStats = std::make_shared<CompletionItem>();
@@ -576,7 +576,7 @@ void CompletionItem::initialize_tree() {
     securityResult_verdictInfo->addChild("confidence_score", "int32");
     securityResult_verdictInfo->addChild("global_customer_count", "int32");
     securityResult_verdictInfo->addChild("global_hits_count", "int32");
-    securityResult_verdictInfo->addChild(securityResult_IoCStats, "ioc_stats", VAR_NAME(securityResult_IoCStats));
+    securityResult_verdictInfo->addChild(securityResult_IoCStats, CompletionItemProperties("ioc_stats", VAR_NAME(securityResult_IoCStats), true, false, completionItemKind::Method));
     securityResult_verdictInfo->addChild("malicious_count", "int32");
     securityResult_verdictInfo->addChild("neighbour_influence");
     securityResult_verdictInfo->addChild("pwn", "bool");
@@ -590,30 +590,30 @@ void CompletionItem::initialize_tree() {
 
     std::shared_ptr<CompletionItem> securityResult = std::make_shared<CompletionItem>();
     securityResult->addChild(noun, "about", VAR_NAME(noun));
-    securityResult->addChild(CompletionItemProperties("action", "SecurityResult.Action", completionItemKind::Enum));
+    securityResult->addChild(CompletionItemProperties("action", "SecurityResult.Action", true, false, completionItemKind::Enum));
     securityResult->addChild("action_details");
     securityResult->addChild(CompletionItemProperties("alert_state", "SecurityResult.AlertState", completionItemKind::Enum));
-    securityResult->addChild(analyticsMetadata, "analytics_metadata", VAR_NAME(analyticsMetadata));
-    securityResult->addChild(securityResult_association, "associations", VAR_NAME(securityResult_association));
+    securityResult->addChild(analyticsMetadata, CompletionItemProperties("analytics_metadata", VAR_NAME(analyticsMetadata), true, false, completionItemKind::Method));
+    securityResult->addChild(securityResult_association, CompletionItemProperties("associations", VAR_NAME(securityResult_association), true, false, completionItemKind::Method));
     securityResult->addChild(attackDetails, "attack_details", VAR_NAME(attackDetails));
-    securityResult->addChild("campaigns");
-    securityResult->addChild(CompletionItemProperties("category", "SecurityResult.SecurityCategory", completionItemKind::Enum));
-    securityResult->addChild("category_details");
+    securityResult->addChild(CompletionItemProperties("campaigns", "string", true, false));
+    securityResult->addChild(CompletionItemProperties("category", "SecurityResult.SecurityCategory", true, false, completionItemKind::Enum));
+    securityResult->addChild(CompletionItemProperties("category_details", "string", true, false));
     securityResult->addChild(CompletionItemProperties("confidence", "SecurityResult.ProductConfidence", completionItemKind::Enum));
     securityResult->addChild("confidence_details");
     securityResult->addChild("confidence_score", "float");
     securityResult->addChild("description");
-    securityResult->addChild(label, "detection_fields", VAR_NAME(label));
+    securityResult->addChild(label, CompletionItemProperties("detection_fields", VAR_NAME(label), true, false, completionItemKind::Method));
     securityResult->addChild("first_discovered_time", "protobuf.Timestamp");
     securityResult->addChild("last_discovered_time", "protobuf.Timestamp");
     securityResult->addChild("last_updated_time", "protobuf.Timestamp");
-    securityResult->addChild(label, "outcomes", VAR_NAME(label));
+    securityResult->addChild(label, CompletionItemProperties("outcomes", VAR_NAME(label), true, false, completionItemKind::Method));
     securityResult->addChild(CompletionItemProperties("priority", "SecurityResult.ProductPriority", completionItemKind::Enum));
     securityResult->addChild("priority_details");
     securityResult->addChild("risk_score", "float");
     securityResult->addChild("rule_author");
     securityResult->addChild("rule_id");
-    securityResult->addChild(label, "rule_labels", VAR_NAME(label));
+    securityResult->addChild(label, CompletionItemProperties("rule_labels", VAR_NAME(label), true, false));
     securityResult->addChild("rule_name");
     securityResult->addChild("rule_set");
     securityResult->addChild("rule_set_display_name");
@@ -631,7 +631,7 @@ void CompletionItem::initialize_tree() {
     securityResult->addChild(CompletionItemProperties("threat_verdict", "ThreatVerdict", completionItemKind::Enum));
     securityResult->addChild("url_back_to_product");
     securityResult->addChild(CompletionItemProperties("verdict", "SecurityResult.Verdict", completionItemKind::Enum));
-    securityResult->addChild(securityResult_verdictInfo, "verdict_info", VAR_NAME(securityResult_verdictInfo));
+    securityResult->addChild(securityResult_verdictInfo, CompletionItemProperties("verdict_info", VAR_NAME(securityResult_verdictInfo), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> fileMetadataCodesign = std::make_shared<CompletionItem>();
     fileMetadataCodesign->addChild("compilation_time", "protobuf.Timestamp");
@@ -645,10 +645,10 @@ void CompletionItem::initialize_tree() {
     std::shared_ptr<CompletionItem> file = std::make_shared<CompletionItem>();
     file->addChild("ahash");
     file->addChild("authentihash");
-    file->addChild("capabilities_tags");
-    file->addChild("embedded_domains");
-    file->addChild("embedded_ips");
-    file->addChild("embedded_urls");
+    file->addChild(CompletionItemProperties("capabilities_tags", "string", true, false));
+    file->addChild(CompletionItemProperties("embedded_domains", "string", true, false));
+    file->addChild(CompletionItemProperties("embedded_ips", "string", true, false));
+    file->addChild(CompletionItemProperties("embedded_urls", "string", true, false));
     file->addChild("exif_info", "ExifInfo");
     file->addChild("file_metadata", "FileMetadata");
     file->addChild(CompletionItemProperties("file_type", "File.FileType", completionItemKind::Enum));
@@ -662,7 +662,7 @@ void CompletionItem::initialize_tree() {
     file->addChild(favicon, "main_icon", VAR_NAME(favicon));
     file->addChild("md5");
     file->addChild("mime_type");
-    file->addChild("names");
+    file->addChild(CompletionItemProperties("names", "string", true, false));
     file->addChild(pdfInfo, "pdf_info", VAR_NAME(pdfInfo));
     file->addChild(fileMetadataPE, "pe_file", VAR_NAME(fileMetadataPE));
     file->addChild(prevalence, "prevalence", VAR_NAME(prevalence));
@@ -677,13 +677,13 @@ void CompletionItem::initialize_tree() {
     file->addChild("stat_inode", "uint64");
     file->addChild("stat_mode", "uint64");
     file->addChild("stat_nlink", "uint64");
-    file->addChild("tags");
+    file->addChild(CompletionItemProperties("tags", "string", true, false));
     file->addChild("vhash");
 
     std::shared_ptr<CompletionItem> group = std::make_shared<CompletionItem>();
     group->addChild(attribute, "attribute", VAR_NAME(attribute));
     group->addChild("creation_time", "protobuf.Timestamp");
-    group->addChild("email_addresses");
+    group->addChild(CompletionItemProperties("email_addresses", "string", true, false));
     group->addChild("group_display_name");
     group->addChild("product_object_id");
     group->addChild("windows_sid");
@@ -700,15 +700,15 @@ void CompletionItem::initialize_tree() {
     securityResult_source->addChild(CompletionItemProperties("quality", "SecurityResult.ProductConfidence", completionItemKind::Enum));
     securityResult_source->addChild("response_count", "int32");
     securityResult_source->addChild("source_count", "int32");
-    securityResult_source->addChild(securityResult_source, "threat_intelligence_sources", VAR_NAME(securityResult_source));
+    securityResult_source->addChild(securityResult_source, CompletionItemProperties("threat_intelligence_sources", VAR_NAME(securityResult_source), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> securityResult_providerMLVerdict = std::make_shared<CompletionItem>();
     securityResult_providerMLVerdict->addChild("benign_count", "int32");
     securityResult_providerMLVerdict->addChild("confidence_score", "int32");
     securityResult_providerMLVerdict->addChild("malicious_count", "int32");
-    securityResult_providerMLVerdict->addChild(securityResult_source, "mandiant_sources", VAR_NAME(securityResult_source));
+    securityResult_providerMLVerdict->addChild(securityResult_source, CompletionItemProperties("mandiant_sources", VAR_NAME(securityResult_source), true, false, completionItemKind::Method));
     securityResult_providerMLVerdict->addChild("source_provider");
-    securityResult_providerMLVerdict->addChild(securityResult_source, "third_party_sources", VAR_NAME(securityResult_source));
+    securityResult_providerMLVerdict->addChild(securityResult_source, CompletionItemProperties("third_party_sources", VAR_NAME(securityResult_source), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> securityResult_verdict = std::make_shared<CompletionItem>();
     securityResult_verdict->addChild(securityResult_analystVerdict, "analyst_verdict", VAR_NAME(securityResult_analystVerdict));
@@ -718,7 +718,7 @@ void CompletionItem::initialize_tree() {
     securityResult_verdict->addChild(securityResult_providerMLVerdict, "verdict", VAR_NAME(securityResult_providerMLVerdict));
 
     std::shared_ptr<CompletionItem> investigation = std::make_shared<CompletionItem>();
-    investigation->addChild("comments");
+    investigation->addChild(CompletionItemProperties("comments", "string", true, false));
     investigation->addChild("priority", "Priority");
     investigation->addChild("reason", "Reason");
     investigation->addChild("reputation", "Reputation");
@@ -731,7 +731,7 @@ void CompletionItem::initialize_tree() {
     std::shared_ptr<CompletionItem> process = std::make_shared<CompletionItem>();
     process->addChild("access_mask", "uint64");
     process->addChild("command_line");
-    process->addChild("command_line_history");
+    process->addChild(CompletionItemProperties("command_line_history", "string", true, false));
     process->addChild(file, "file", VAR_NAME(file));
     process->addChild("integrity_level_rid", "uint64");
     process->addChild("parent_pid");
@@ -753,7 +753,7 @@ void CompletionItem::initialize_tree() {
     tracker->addChild("url");
 
     std::shared_ptr<CompletionItem> url = std::make_shared<CompletionItem>();
-    url->addChild("categories");
+    url->addChild(CompletionItemProperties("categories", "string", true, false));
     url->addChild(favicon, "favicon", VAR_NAME(favicon));
     url->addChild(protobuf_Struct, "html_meta", VAR_NAME(protobuf_Struct));
     url->addChild("last_final_url");
@@ -762,9 +762,9 @@ void CompletionItem::initialize_tree() {
     url->addChild("last_http_response_content_sha256");
     url->addChild(protobuf_Struct, "last_http_response_cookies", VAR_NAME(protobuf_Struct));
     url->addChild(protobuf_Struct, "last_http_response_headers", VAR_NAME(protobuf_Struct));
-    url->addChild("tags");
+    url->addChild(CompletionItemProperties("tags", "string", true, false));
     url->addChild("title");
-    url->addChild(tracker, "trackers", VAR_NAME(tracker));
+    url->addChild(tracker, CompletionItemProperties("trackers", VAR_NAME(tracker), true, false, completionItemKind::Method));
     url->addChild("url");
 
     // Definition is above
@@ -781,14 +781,14 @@ void CompletionItem::initialize_tree() {
     noun->addChild(group, "group", VAR_NAME(group));
     noun->addChild("hostname");
     noun->addChild(investigation, "investigation", VAR_NAME(investigation));
-    noun->addChild("ip");
-    noun->addChild(artifact, "ip_geo_artifact", VAR_NAME(artifact));
-    noun->addChild(location, "ip_location", VAR_NAME(location));
-    noun->addChild(label, "labels", VAR_NAME(label));
+    noun->addChild(CompletionItemProperties("ip", "string", true, false));
+    noun->addChild(artifact, CompletionItemProperties("ip_geo_artifact", VAR_NAME(artifact), true, false, completionItemKind::Method));
+    noun->addChild(location, CompletionItemProperties("ip_location", VAR_NAME(location), true, false, completionItemKind::Method));
+    noun->addChild(label, CompletionItemProperties("labels", VAR_NAME(label), true, false));
     noun->addChild(location, "location", VAR_NAME(location));
-    noun->addChild("mac");
+    noun->addChild(CompletionItemProperties("mac", "string", true, false));
     noun->addChild("namespace");
-    noun->addChild("nat_ip");
+    noun->addChild(CompletionItemProperties("nat_ip", "string", true, false));
     noun->addChild("nat_port", "int32");
     noun->addChild(network, "network", VAR_NAME(network));
     noun->addChild("object_reference");
@@ -797,31 +797,31 @@ void CompletionItem::initialize_tree() {
     noun->addChild("platform_version");
     noun->addChild("port", "int32");
     noun->addChild(process, "process", VAR_NAME(process));
-    noun->addChild(process, "process_ancestors", VAR_NAME(process));
+    noun->addChild(process, CompletionItemProperties("process_ancestors", VAR_NAME(process), true, false, completionItemKind::Method));
     noun->addChild(registry, "registry", VAR_NAME(registry));
     noun->addChild(resource, "resource", VAR_NAME(resource));
-    noun->addChild(resource, "resource_ancestors", VAR_NAME(resource));
-    noun->addChild(securityResult, "security_result", VAR_NAME(securityResult));
+    noun->addChild(resource, CompletionItemProperties("resource_ancestors", VAR_NAME(resource), true, false, completionItemKind::Method));
+    noun->addChild(securityResult, CompletionItemProperties("security_result", VAR_NAME(securityResult), true, false, completionItemKind::Method));
     noun->addChild("url");
     noun->addChild(url, "url_metadata", VAR_NAME(url));
     noun->addChild(user, "user", VAR_NAME(user));
-    noun->addChild(user, "user_management_chain", VAR_NAME(user));
+    noun->addChild(user, CompletionItemProperties("user_management_chain", VAR_NAME(user), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> authentication = std::make_shared<CompletionItem>();
     authentication->addChild("auth_details");
-    authentication->addChild(CompletionItemProperties("mechanism", "Authentication.Mechanism", completionItemKind::Enum));
+    authentication->addChild(CompletionItemProperties("mechanism", "Authentication.Mechanism", true, false, completionItemKind::Enum));
     authentication->addChild(CompletionItemProperties("type", "Authentication.AuthType", completionItemKind::Enum));
 
     std::shared_ptr<CompletionItem> vulnerabilities = std::make_shared<CompletionItem>();
-    vulnerabilities->addChild(vulnerability, "vulnerabilities", VAR_NAME(vulnerability));
+    vulnerabilities->addChild(vulnerability, CompletionItemProperties("vulnerabilities", VAR_NAME(vulnerability), true, false, completionItemKind::Method));
 
     std::shared_ptr<CompletionItem> extensions = std::make_shared<CompletionItem>();
     extensions->addChild(authentication, "auth", VAR_NAME(authentication));
     extensions->addChild(vulnerabilities, "vulns", VAR_NAME(vulnerabilities));
 
     std::shared_ptr<CompletionItem> tags = std::make_shared<CompletionItem>();
-    tags->addChild("data_tap_config_name");
-    tags->addChild("tenant_id", "bytes");
+    tags->addChild(CompletionItemProperties("data_tap_config_name", "string", true, false));
+    tags->addChild(CompletionItemProperties("tenant_id", "bytes", true, false));
     
     std::shared_ptr<CompletionItem> metadata = std::make_shared<CompletionItem>();
     metadata->addChild("base_labels", "DataAccessLabels");
@@ -833,7 +833,7 @@ void CompletionItem::initialize_tree() {
     metadata->addChild(CompletionItemProperties("event_type", "Metadata.EventType", completionItemKind::Enum));
     metadata->addChild("id", "bytes");
     metadata->addChild("ingested_timestamp", "protobuf.Timestamp");
-    metadata->addChild(label, "ingestion_labels", VAR_NAME(label));
+    metadata->addChild(label, CompletionItemProperties("ingestion_labels", VAR_NAME(label), true, false));
     metadata->addChild("log_type");
     metadata->addChild("product_deployment_id");
     metadata->addChild("product_event_type");
@@ -844,27 +844,26 @@ void CompletionItem::initialize_tree() {
     metadata->addChild("url_back_to_product");
     metadata->addChild("vendor_name");
 
-    root->addChild(noun, "about", VAR_NAME(noun));
+    root->addChild(noun, CompletionItemProperties("about", VAR_NAME(noun), true, false, completionItemKind::Method));
     root->addChild(protobuf_Struct, "additional", VAR_NAME(protobuf_Struct));
     root->addChild(extensions, "extensions", VAR_NAME(extensions));
-    root->addChild(noun, "intermediary", VAR_NAME(noun));
+    root->addChild(noun, CompletionItemProperties("intermediary", VAR_NAME(noun), true, false, completionItemKind::Method));
     root->addChild(metadata, "metadata", VAR_NAME(metadata));
     root->addChild(network, "network", VAR_NAME(network));
     root->addChild(noun, "observer", VAR_NAME(noun));
     root->addChild(noun, "principal", VAR_NAME(noun));
-    root->addChild(securityResult, "security_result", VAR_NAME(securityResult));
+    root->addChild(securityResult, CompletionItemProperties("security_result", VAR_NAME(securityResult), true, false, completionItemKind::Method));
     root->addChild(noun, "src", VAR_NAME(noun));
     root->addChild(noun, "target", VAR_NAME(noun));
 }
 
 
 bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs) {
-        return lhs.label == rhs.label;
+    return lhs.label == rhs.label;
 }
 
 
 void CompletionItem::addChild(const std::string& label, std::string type) {
-    std::replace(type.begin(), type.end(), '_', '.');
     children[CompletionItemProperties(label, type)] = nullptr;
 }
 
@@ -873,7 +872,6 @@ void CompletionItem::addChild(const CompletionItemProperties& property) {
 }
 
 void CompletionItem::addChild(std::shared_ptr<CompletionItem> ptr, const std::string& label, std::string type) {
-    std::replace(type.begin(), type.end(), '_', '.');
     children[CompletionItemProperties(label, type, completionItemKind::Method)] = ptr;
 }
 
