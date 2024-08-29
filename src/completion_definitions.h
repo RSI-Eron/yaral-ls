@@ -44,11 +44,12 @@ enum completionItemKind {
 class CompletionItemProperties { // json often means not supported
 private: // members
     std::string label;
-    std::optional<json> labelDetails;
-    std::optional<completionItemKind> kind;
-    std::optional<std::vector<completionItemKind>> tags; // Mark as deprecated
+    std::optional<json> labelDetails; // For type and description
+    std::optional<completionItemKind> kind; // Editor will select an icon based on this field
+    std::optional<std::vector<json>> tags; // Mark as deprecated
     std::optional<std::string> detail;
     std::optional<json> documentation; // Can be markdown but not as a string 😭
+    std::optional<bool> deprecated;
     std::optional<bool> preselect;
     std::optional<std::string> sortText;
     std::optional<std::string> filterText;
@@ -68,6 +69,7 @@ public: // Getters
     const std::optional<json> getKind() const;
     const std::optional<json> getTags() const;
     const std::optional<json> getDetail() const;
+    const std::optional<json> getDeprecated() const;
     const std::optional<json> getDocumentation() const;
     const std::optional<json> getPreselect() const;
     const std::optional<json> getSortText() const;
@@ -83,10 +85,32 @@ public: // Getters
     const std::optional<json> getData() const;
 
 public:
-    CompletionItemProperties(std::string label) : label(std::move(label)) {}
+    CompletionItemProperties(std::string label, std::string type,  bool repeated = false, bool deprecated = false, completionItemKind kind = completionItemKind::Field)
+        : label(std::move(label)) {
+        if (repeated)
+            detail = "repeated";
+
+        if (deprecated) {
+            this->deprecated = deprecated;
+
+            std::vector<json> v;
+            json j{{"deprecated", 1}};
+            v.push_back(j);
+            tags = v;
+        }
+
+        // Show type;
+        if (type != "")
+            labelDetails = json{{"description", type}};
+
+        this->kind = kind;
+    }
+
+    CompletionItemProperties(std::string label, std::string type, completionItemKind kind)
+        : CompletionItemProperties(label, type, false, false, kind) {}
+
     friend bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs);
 };
-
 
 namespace std {
     template <>
@@ -113,9 +137,9 @@ public:
     CompletionItem() = default;
 
 private:
-    void addChild(const std::string&);
+    void addChild(const std::string&, std::string type = "string");
     void addChild(const CompletionItemProperties&);
-    void addChild(std::shared_ptr<CompletionItem>, const std::string&);
+    void addChild(std::shared_ptr<CompletionItem>, const std::string&, std::string type);
     void addChild(std::shared_ptr<CompletionItem>, const CompletionItemProperties&);
 };
 
