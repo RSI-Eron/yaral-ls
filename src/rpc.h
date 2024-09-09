@@ -28,6 +28,7 @@ private:
     void handleRequest(const rpc_request&);
     void handleNotification(const rpc_request&);
     void completion(const rpc_request&);
+    void hover(const rpc_request&);
     void didOpen(const rpc_request&);
     void didChange(const rpc_request&);
     void didClose(const rpc_request&);
@@ -36,10 +37,11 @@ private:
     // Function pointer type for member functions
     using MemberFunctionPointer = void (RPCHandler::*)(const rpc_request&);
 
-    static constexpr std::array<std::pair<std::string_view, MemberFunctionPointer>, 3> requestMap = {{
+    static constexpr std::array<std::pair<std::string_view, MemberFunctionPointer>, 4> requestMap = {{
         {"initialize", &RPCHandler::initializeResult},
         {"shutdown", &RPCHandler::shutdown},
         {"textDocument/completion", &RPCHandler::completion},
+        {"textDocument/hover", &RPCHandler::hover},
     }};
 
     // Compile-time lookup function

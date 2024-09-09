@@ -63,7 +63,13 @@ private: // members
     std::optional<json> command;
     std::optional<json> data;
 
+    std::string type;
+    bool repeated;
+
 public: // Getters
+    const std::string& getType() const;
+    bool getRepeated() const;
+
     const std::string& getLabel() const;
     const std::optional<json> getLabelDetails() const;
     const std::optional<json> getKind() const;
@@ -85,14 +91,12 @@ public: // Getters
     const std::optional<json> getData() const;
 
 public:
-    CompletionItemProperties(std::string label, std::string type __attribute__((unused)),  bool repeated = false, bool deprecated = false, completionItemKind kind = completionItemKind::Field)
-        : label(std::move(label)) {
+    CompletionItemProperties(std::string label, std::string type,  bool repeated = false, bool deprecated = false, completionItemKind kind = completionItemKind::Field)
+        : label(std::move(label)), deprecated(deprecated), type(type), repeated(repeated) {
         if (repeated)
             detail = "repeated";
 
         if (deprecated) {
-            this->deprecated = deprecated;
-
             std::vector<json> v;
             json j{{"deprecated", 1}};
             v.push_back(j);
@@ -114,8 +118,13 @@ public:
     CompletionItemProperties(std::string label, std::string type, completionItemKind kind)
         : CompletionItemProperties(label, type, false, false, kind) {}
 
+    friend bool operator==(const CompletionItemProperties& lhs, const std::string& rhs) {
+        return lhs.label == rhs;
+    };
+
     friend bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs);
 };
+
 
 namespace std {
     template <>
@@ -132,6 +141,8 @@ class CompletionItem {
 public:
     static void initialize_tree();
     static const std::vector<CompletionItemProperties> getCompletionList(const std::string&, int);
+    static const std::string getHover(const std::string&, int);
+    static const std::shared_ptr<CompletionItem> getLeafFromExpression(std::string expression, std::string* leaf);
 
 private:
     static std::shared_ptr<CompletionItem> root;
@@ -155,6 +166,5 @@ struct completion_list {
 };
 void to_json(json& j, const CompletionItemProperties& p);
 void to_json(json& j, const completion_list& p);
-
 
 #endif // COMPLETION_DEFINITIONS_H_

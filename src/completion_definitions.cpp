@@ -858,11 +858,9 @@ void CompletionItem::initialize_tree() {
 
 }
 
-
 bool operator==(const CompletionItemProperties& lhs, const CompletionItemProperties& rhs) {
     return lhs.label == rhs.label;
 }
-
 
 void CompletionItem::addChild(const std::string& label, std::string type) {
     children[CompletionItemProperties(label, type)] = nullptr;
@@ -880,6 +878,8 @@ void CompletionItem::addChild(std::shared_ptr<CompletionItem> ptr, const Complet
     children[property] = ptr;
 }
 
+const std::string& CompletionItemProperties::getType() const {return type;}
+bool CompletionItemProperties::getRepeated() const {return repeated;}
 const std::string& CompletionItemProperties::getLabel() const {return label;}
 const std::optional<json> CompletionItemProperties::getLabelDetails() const {return labelDetails;}
 const std::optional<json> CompletionItemProperties::getKind() const {return kind;}
@@ -986,11 +986,13 @@ bool isStartDelim(char c) {
     return c == '[' || c == ']' || c == '`' || c == '\'' || c == '/' || c == '\"';
 }
 
-const std::vector<CompletionItemProperties> CompletionItem::getCompletionList(const std::string& line, int pos) {
-    std::string expression = getCurrentExpression(line, pos);
+const std::shared_ptr<CompletionItem> CompletionItem::getLeafFromExpression(std::string expression, std::string* leaf = nullptr) {
+    // In the line :
+    // $my_var = $my_event.target.application
+    // "$my_var" and "$my_event.taget.application" are 2 distinct expressions
 
-    std::stringstream ss;
     std::shared_ptr<CompletionItem> current = nullptr;
+    std::stringstream ss;
 
     size_t len = expression.length();
     bool ignore = false;
@@ -1026,8 +1028,41 @@ const std::vector<CompletionItemProperties> CompletionItem::getCompletionList(co
         } else {
             ss << expression[i];
         }
-
     }
+
+    if (leaf)
+        *leaf = ss.str();
+    return current;
+}
+
+
+const std::string CompletionItem::getHover(const std::string& line, int pos) {
+    std::string expression = getCurrentExpression(line, pos);
+    std::string leaf;
+    std::shared_ptr<CompletionItem> parent = getLeafFromExpression(expression, &leaf);
+
+    if (parent == nullptr)
+        return "";
+
+    for (const auto& pair : parent->children) {
+        if (leaf == pair.first) {
+            std::string res;
+            if (pair.first.getDeprecated().has_value() && pair.first.getDeprecated().value())
+                res += "*deprecated* ";
+            res += "**" + pair.first.getType() + "**";
+            if (pair.first.getRepeated())
+                res += " *repeated*";
+
+            return res;
+        }
+    }
+
+    return "";
+}
+
+const std::vector<CompletionItemProperties> CompletionItem::getCompletionList(const std::string& line, int pos) {
+    std::string expression = getCurrentExpression(line, pos);
+    std::shared_ptr<CompletionItem> current = getLeafFromExpression(expression);
 
     std::vector<CompletionItemProperties> res;
     if (current == nullptr)

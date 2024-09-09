@@ -44,6 +44,7 @@ void RPCHandler::initializeResult(const rpc_request& initialize_request) {
     static json server_capabilities{
         {"textDocumentSync", 2}, // Incremental, only changes are sent to server. Not the full document (1).
         {"completionProvider", completion_capabilities},
+        {"hoverProvider", true}
 //        {"documentFormattingProvider"}
 //        {"diagnosticProvider"}
     };
@@ -87,6 +88,33 @@ void RPCHandler::didClose(const rpc_request& request) {
     removeDocumentByUri(request.params.value()["textDocument"]["uri"]);
 }
 
+
+void RPCHandler::hover(const rpc_request& request) {
+    json param(request.params.value());
+    const std::string line = Document::findByUri(
+        documents,
+        param["textDocument"]["uri"])->getLine(param["position"]["line"]);
+
+
+    std::string hoverInfo = CompletionItem::getHover(line, (int)param["position"]["character"] - 1);
+    json hoverJson {
+        {"contents", {
+                {"kind", "markdown"},
+                {"value", hoverInfo}
+            }},
+        //{"range", range}
+    };
+
+    rpc_response response;
+    response.id = request.id;
+    response.is_id_string = request.is_id_string;
+    response.result = hoverJson;
+
+    //print_response(response, false);
+    sendResponse(response);
+
+}
+
 void RPCHandler::completion(const rpc_request& request) {
     json param(request.params.value());
     const std::string line = Document::findByUri(
@@ -101,17 +129,12 @@ void RPCHandler::completion(const rpc_request& request) {
         .items = item_list,
     };
 
-    json test {item_list};
-
     rpc_response response;
     response.id = request.id;
     response.is_id_string = request.is_id_string;
     response.result = list;
 
-    // print_request(request);
-    // print_response(response);
-
-    print_response(response, false);
+    //print_response(response, false);
     sendResponse(response);
 }
 
